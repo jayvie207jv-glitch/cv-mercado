@@ -45,28 +45,10 @@ body { font-family: 'DM Sans', sans-serif; -webkit-font-smoothing: antialiased; 
 .modal-backdrop { background: rgba(3,19,25,0.7); backdrop-filter: blur(12px); }
 .glass { background: rgba(253,251,247,0.92); backdrop-filter: blur(12px); }
 .dark .glass { background: rgba(5,31,46,0.92); }
-
-.hero-pattern {
-  background: linear-gradient(135deg, #0f4c75 0%, #072d44 100%);
-  position: relative;
-  overflow: hidden;
-}
-.hero-pattern::before {
-  content:''; position:absolute; inset:0;
-  background-image: 
-    radial-gradient(circle at 20% 80%, rgba(247,178,103,0.15) 0%, transparent 50%),
-    radial-gradient(circle at 80% 20%, rgba(244,132,95,0.1) 0%, transparent 50%);
-}
-.hero-pattern::after {
-  content:''; position:absolute; bottom:0; left:0; right:0; height:80px;
-  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 120'%3E%3Cpath d='M0,60 C300,100 600,20 1200,60 L1200,120 L0,120 Z' fill='%23fdfbf7'/%3E%3C/svg%3E") no-repeat bottom;
-  background-size: cover;
-}
-.dark .hero-pattern::after {
-  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 120'%3E%3Cpath d='M0,60 C300,100 600,20 1200,60 L1200,120 L0,120 Z' fill='%23031319'/%3E%3C/svg%3E") no-repeat bottom;
-  background-size: cover;
-}
-
+.hero-pattern { background: linear-gradient(135deg, #0f4c75 0%, #072d44 100%); position: relative; overflow: hidden; }
+.hero-pattern::before { content:''; position:absolute; inset:0; background-image: radial-gradient(circle at 20% 80%, rgba(247,178,103,0.15) 0%, transparent 50%), radial-gradient(circle at 80% 20%, rgba(244,132,95,0.1) 0%, transparent 50%); }
+.hero-pattern::after { content:''; position:absolute; bottom:0; left:0; right:0; height:80px; background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 120'%3E%3Cpath d='M0,60 C300,100 600,20 1200,60 L1200,120 L0,120 Z' fill='%23fdfbf7'/%3E%3C/svg%3E") no-repeat bottom; background-size: cover; }
+.dark .hero-pattern::after { background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 120'%3E%3Cpath d='M0,60 C300,100 600,20 1200,60 L1200,120 L0,120 Z' fill='%23031319'/%3E%3C/svg%3E") no-repeat bottom; background-size: cover; }
 .cat-card { transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); position: relative; overflow: hidden; }
 .cat-card::before { content:''; position:absolute; inset:0; background: linear-gradient(135deg, transparent 0%, rgba(247,178,103,0.05) 100%); opacity: 0; transition: opacity 0.3s; }
 .cat-card:hover::before { opacity: 1; }
@@ -74,58 +56,41 @@ body { font-family: 'DM Sans', sans-serif; -webkit-font-smoothing: antialiased; 
 .cat-card.active { background: linear-gradient(135deg, #0f4c75 0%, #072d44 100%); color: white; border-color: transparent; }
 .cat-card.active .cat-icon { background: rgba(247,178,103,0.2); color: #f7b267; }
 .cat-card.active .cat-name { color: white; }
-
 .listing-card { transition: all 0.3s ease; }
 .listing-card:hover { transform: translateY(-4px); box-shadow: 0 25px 50px -12px rgba(15,76,117,0.15); }
-
 .btn-primary { background: linear-gradient(135deg, #f7b267 0%, #f4845f 100%); color: white; transition: all 0.3s ease; box-shadow: 0 4px 15px -3px rgba(247,178,103,0.4); position: relative; overflow: hidden; }
 .btn-primary::before { content:''; position:absolute; top:0; left:-100%; width:100%; height:100%; background: linear-gradient(90deg,transparent,rgba(255,255,255,0.3),transparent); transition: left 0.5s ease; }
 .btn-primary:hover::before { left: 100%; }
 .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 25px -5px rgba(247,178,103,0.5); }
-
 .btn-ocean { background: linear-gradient(135deg, #0f4c75 0%, #072d44 100%); color: white; transition: all 0.3s ease; }
 .btn-ocean:hover { transform: translateY(-2px); box-shadow: 0 8px 25px -5px rgba(15,76,117,0.4); }
-
 .search-input { transition: all 0.3s ease; }
 .search-input:focus { box-shadow: 0 0 0 3px rgba(247,178,103,0.2); border-color: #f7b267; }
-
 .filter-chip { transition: all 0.2s ease; }
 .filter-chip:hover { transform: translateY(-1px); }
 .filter-chip.active { background: linear-gradient(135deg, #0f4c75 0%, #072d44 100%); color: white; border-color: transparent; }
-
 .input-cv { transition: all 0.3s ease; }
 .input-cv:focus { box-shadow: 0 0 0 3px rgba(15,76,117,0.1); border-color: #0f4c75; }
-
 ::-webkit-scrollbar { width:8px; height:8px; }
 ::-webkit-scrollbar-track { background:transparent; }
 ::-webkit-scrollbar-thumb { background:linear-gradient(180deg,#0f4c75,#072d44); border-radius:4px; }
-
 .img-placeholder { background: linear-gradient(135deg,#f0e6d2 0%,#e0efff 100%); display:flex; align-items:center; justify-content:center; }
 .dark .img-placeholder { background: linear-gradient(135deg,#072d44 0%,#051f2e 100%); }
-
 .skeleton { background: linear-gradient(90deg, #f8f3ea 25%, #f0e6d2 50%, #f8f3ea 75%); background-size: 200% 100%; animation: loading 1.5s infinite; }
 .dark .skeleton { background: linear-gradient(90deg, #072d44 25%, #051f2e 50%, #072d44 75%); background-size: 200% 100%; }
 @keyframes loading { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
-
 .line-clamp-2 { display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
-
 .badge-premium { background: linear-gradient(135deg, #f7b267 0%, #f4845f 100%); box-shadow: 0 4px 12px rgba(247,178,103,0.4); }
-
 .price-text { color: #0f4c75; font-weight: 800; }
 .dark .price-text { color: #f7b267; }
-
 .auth-tab { transition: all 0.3s ease; }
 .auth-tab.active { background: linear-gradient(135deg, #0f4c75 0%, #072d44 100%); color: white; }
-
 .offline-banner { background: #f4845f; color: white; padding: 8px; text-align: center; font-size: 14px; display: none; }
 .offline-banner.show { display: block; }
-
 .whatsapp-support { background: linear-gradient(135deg,#25D366 0%,#128C7E 100%); transition: all 0.3s ease; }
 .whatsapp-support:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(37,211,102,0.5); }
-
 .social-btn { transition: all 0.3s ease; }
 .social-btn:hover { transform: translateY(-2px); box-shadow: 0 10px 20px -5px rgba(0,0,0,0.1); }
-
 .gradient-text { background: linear-gradient(135deg,#f7b267 0%,#f4845f 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
 </style>
 </head>
@@ -384,95 +349,95 @@ const EXEMPLOS = [
 
 const CATEGORY_FILTERS = {
   cars: [
-    { id:'brand', label:'🚗 Marca', type:'select', options:['Toyota','Honda','Nissan','Hyundai','Kia','Mitsubishi','Suzuki','Mazda','Subaru','Ford','Chevrolet','Volkswagen','BMW','Mercedes-Benz','Audi','Porsche','Ferrari','Lamborghini','Peugeot','Renault','Citroen','Fiat','Opel','Seat','Skoda','Volvo','Land Rover','Jeep','Outros'] },
-    { id:'model', label:'🚗 Modelo', type:'text' },
-    { id:'year_from', label:'📅 Ano (de)', type:'number' },
-    { id:'year_to', label:'📅 Ano (ate)', type:'number' },
-    { id:'km_from', label:'🛣️ KM (de)', type:'number' },
-    { id:'km_to', label:'🛣️ KM (ate)', type:'number' },
-    { id:'fuel', label:'⛽ Combustivel', type:'select', options:['Gasolina','Diesel','Hibrido','Eletrico','GPL'] },
-    { id:'transmission', label:'⚙️ Caixa', type:'select', options:['Manual','Automatica'] },
-    { id:'traction', label:'🚘 Tracao', type:'select', options:['Dianteira','Traseira','Integral'] },
-    { id:'doors', label:'🚪 Portas', type:'select', options:['2','3','4','5'] },
-    { id:'seats', label:'🪑 Lugares', type:'number' },
-    { id:'color', label:'🎨 Cor', type:'select', options:['Branco','Preto','Cinzento','Prata','Vermelho','Azul','Verde','Amarelo','Outra'] },
-    { id:'inspection', label:'🧾 Inspecao valida', type:'checkbox' },
-    { id:'imported', label:'📄 Importado', type:'checkbox' },
-    { id:'single_owner', label:'🔑 Unico dono', type:'checkbox' },
-    { id:'accident_free', label:'🚫 Nao acidentado', type:'checkbox' },
-    { id:'trade_in', label:'✅ Aceita retoma', type:'checkbox' }
+    { id:'brand', label:'Marca', type:'select', options:['Toyota','Honda','Nissan','Hyundai','Kia','Mitsubishi','Suzuki','Mazda','Subaru','Ford','Chevrolet','Volkswagen','BMW','Mercedes-Benz','Audi','Porsche','Ferrari','Lamborghini','Peugeot','Renault','Citroen','Fiat','Opel','Seat','Skoda','Volvo','Land Rover','Jeep','Outros'] },
+    { id:'model', label:'Modelo', type:'text' },
+    { id:'year_from', label:'Ano (de)', type:'number' },
+    { id:'year_to', label:'Ano (ate)', type:'number' },
+    { id:'km_from', label:'KM (de)', type:'number' },
+    { id:'km_to', label:'KM (ate)', type:'number' },
+    { id:'fuel', label:'Combustivel', type:'select', options:['Gasolina','Diesel','Hibrido','Eletrico','GPL'] },
+    { id:'transmission', label:'Caixa', type:'select', options:['Manual','Automatica'] },
+    { id:'traction', label:'Tracao', type:'select', options:['Dianteira','Traseira','Integral'] },
+    { id:'doors', label:'Portas', type:'select', options:['2','3','4','5'] },
+    { id:'seats', label:'Lugares', type:'number' },
+    { id:'color', label:'Cor', type:'select', options:['Branco','Preto','Cinzento','Prata','Vermelho','Azul','Verde','Amarelo','Outra'] },
+    { id:'inspection', label:'Inspecao valida', type:'checkbox' },
+    { id:'imported', label:'Importado', type:'checkbox' },
+    { id:'single_owner', label:'Unico dono', type:'checkbox' },
+    { id:'accident_free', label:'Nao acidentado', type:'checkbox' },
+    { id:'trade_in', label:'Aceita retoma', type:'checkbox' }
   ],
   motorcycles: [
-    { id:'brand', label:'🏍️ Marca', type:'select', options:['Honda','Yamaha','Suzuki','Kawasaki','BMW','Ducati','KTM','Harley-Davidson','Triumph','Royal Enfield','Aprilia','Husqvarna','Beta','Gas Gas','Sherco','TM Racing','Piaggio','Vespa','Kymco','SYM','Peugeot','Outros'] },
-    { id:'model', label:'🏍️ Modelo', type:'text' },
-    { id:'year_from', label:'📅 Ano (de)', type:'number' },
-    { id:'year_to', label:'📅 Ano (ate)', type:'number' },
-    { id:'km_from', label:'🛣️ KM (de)', type:'number' },
-    { id:'km_to', label:'🛣️ KM (ate)', type:'number' },
-    { id:'engine_size', label:'⚙️ Cilindrada (cc)', type:'number' },
-    { id:'fuel_type', label:'⛽ Combustivel', type:'select', options:['Gasolina','Eletrico'] },
-    { id:'bike_type', label:'🏍️ Tipo', type:'select', options:['Desportiva','Turismo','Naked','Custom','Enduro','Trial','Scooter','Quatro rodas'] }
+    { id:'brand', label:'Marca', type:'select', options:['Honda','Yamaha','Suzuki','Kawasaki','BMW','Ducati','KTM','Harley-Davidson','Triumph','Royal Enfield','Aprilia','Husqvarna','Beta','Gas Gas','Sherco','TM Racing','Piaggio','Vespa','Kymco','SYM','Peugeot','Outros'] },
+    { id:'model', label:'Modelo', type:'text' },
+    { id:'year_from', label:'Ano (de)', type:'number' },
+    { id:'year_to', label:'Ano (ate)', type:'number' },
+    { id:'km_from', label:'KM (de)', type:'number' },
+    { id:'km_to', label:'KM (ate)', type:'number' },
+    { id:'engine_size', label:'Cilindrada (cc)', type:'number' },
+    { id:'fuel_type', label:'Combustivel', type:'select', options:['Gasolina','Eletrico'] },
+    { id:'bike_type', label:'Tipo', type:'select', options:['Desportiva','Turismo','Naked','Custom','Enduro','Trial','Scooter','Quatro rodas'] }
   ],
   realestate: [
-    { id:'property_type', label:'🏠 Tipo', type:'select', options:['Apartamento','Moradia','Terreno','Loja','Escritorio','Armazem'] },
-    { id:'deal_type', label:'🏷️ Operacao', type:'select', options:['Venda','Arrendamento'] },
-    { id:'area_useful', label:'📏 Area util (m²)', type:'number' },
-    { id:'area_total', label:'📏 Area total (m²)', type:'number' },
-    { id:'bedrooms', label:'🛏️ Quartos', type:'number' },
-    { id:'bathrooms', label:'🚿 Casas de banho', type:'number' },
-    { id:'garage', label:'🚗 Garagem', type:'checkbox' },
-    { id:'pool', label:'🏊 Piscina', type:'checkbox' },
-    { id:'garden', label:'🌳 Jardim', type:'checkbox' },
-    { id:'floor', label:'🏢 Andar', type:'number' },
-    { id:'elevator', label:'🛗 Elevador', type:'checkbox' },
-    { id:'furnished', label:'🪑 Mobilado', type:'checkbox' },
-    { id:'ac', label:'❄️ Ar condicionado', type:'checkbox' },
-    { id:'sea_view', label:'🌊 Vista mar', type:'checkbox' }
+    { id:'property_type', label:'Tipo', type:'select', options:['Apartamento','Moradia','Terreno','Loja','Escritorio','Armazem'] },
+    { id:'deal_type', label:'Operacao', type:'select', options:['Venda','Arrendamento'] },
+    { id:'area_useful', label:'Area util (m2)', type:'number' },
+    { id:'area_total', label:'Area total (m2)', type:'number' },
+    { id:'bedrooms', label:'Quartos', type:'number' },
+    { id:'bathrooms', label:'Casas de banho', type:'number' },
+    { id:'garage', label:'Garagem', type:'checkbox' },
+    { id:'pool', label:'Piscina', type:'checkbox' },
+    { id:'garden', label:'Jardim', type:'checkbox' },
+    { id:'floor', label:'Andar', type:'number' },
+    { id:'elevator', label:'Elevador', type:'checkbox' },
+    { id:'furnished', label:'Mobilado', type:'checkbox' },
+    { id:'ac', label:'Ar condicionado', type:'checkbox' },
+    { id:'sea_view', label:'Vista mar', type:'checkbox' }
   ],
   phones: [
-    { id:'brand', label:'📱 Marca', type:'select', options:['Apple','Samsung','Xiaomi','Huawei','OnePlus','Google','Nokia','Oppo','Vivo','Realme','Motorola','LG','Sony','HTC','Asus','Lenovo','ZTE','Alcatel','BlackBerry','Honor','Nothing','Outros'] },
-    { id:'model', label:'📱 Modelo', type:'text' },
-    { id:'storage', label:'💾 Armazenamento', type:'select', options:['32GB','64GB','128GB','256GB','512GB','1TB'] },
-    { id:'ram', label:'🧠 RAM (GB)', type:'number' },
-    { id:'battery_health', label:'🔋 Saude bateria (%)', type:'number' },
-    { id:'network_4g', label:'📶 4G', type:'checkbox' },
-    { id:'network_5g', label:'📶 5G', type:'checkbox' },
-    { id:'with_box', label:'📦 Com caixa', type:'checkbox' },
-    { id:'with_charger', label:'🔌 Com carregador', type:'checkbox' },
-    { id:'warranty', label:'🛡️ Garantia', type:'checkbox' }
+    { id:'brand', label:'Marca', type:'select', options:['Apple','Samsung','Xiaomi','Huawei','OnePlus','Google','Nokia','Oppo','Vivo','Realme','Motorola','LG','Sony','HTC','Asus','Lenovo','ZTE','Alcatel','BlackBerry','Honor','Nothing','Outros'] },
+    { id:'model', label:'Modelo', type:'text' },
+    { id:'storage', label:'Armazenamento', type:'select', options:['32GB','64GB','128GB','256GB','512GB','1TB'] },
+    { id:'ram', label:'RAM (GB)', type:'number' },
+    { id:'battery_health', label:'Saude bateria (%)', type:'number' },
+    { id:'network_4g', label:'4G', type:'checkbox' },
+    { id:'network_5g', label:'5G', type:'checkbox' },
+    { id:'with_box', label:'Com caixa', type:'checkbox' },
+    { id:'with_charger', label:'Com carregador', type:'checkbox' },
+    { id:'warranty', label:'Garantia', type:'checkbox' }
   ],
   tablets: [
-    { id:'brand', label:'📱 Marca', type:'select', options:['Apple','Samsung','Huawei','Lenovo','Microsoft','Xiaomi','Amazon','Asus','Acer','Toshiba','Sony','LG','Nokia','Alcatel','Outros'] },
-    { id:'model', label:'📱 Modelo', type:'text' },
-    { id:'storage', label:'💾 Armazenamento', type:'select', options:['32GB','64GB','128GB','256GB','512GB','1TB'] },
-    { id:'ram', label:'🧠 RAM (GB)', type:'number' },
-    { id:'screen_size', label:'📏 Tamanho ecra', type:'select', options:['7-8 pol','9-10 pol','11-12 pol','13+ pol'] },
-    { id:'with_keyboard', label:'⌨️ Com teclado', type:'checkbox' },
-    { id:'with_pen', label:'✏️ Com caneta', type:'checkbox' },
-    { id:'with_box', label:'📦 Com caixa', type:'checkbox' },
-    { id:'warranty', label:'🛡️ Garantia', type:'checkbox' }
+    { id:'brand', label:'Marca', type:'select', options:['Apple','Samsung','Huawei','Lenovo','Microsoft','Xiaomi','Amazon','Asus','Acer','Toshiba','Sony','LG','Nokia','Alcatel','Outros'] },
+    { id:'model', label:'Modelo', type:'text' },
+    { id:'storage', label:'Armazenamento', type:'select', options:['32GB','64GB','128GB','256GB','512GB','1TB'] },
+    { id:'ram', label:'RAM (GB)', type:'number' },
+    { id:'screen_size', label:'Tamanho ecra', type:'select', options:['7-8 pol','9-10 pol','11-12 pol','13+ pol'] },
+    { id:'with_keyboard', label:'Com teclado', type:'checkbox' },
+    { id:'with_pen', label:'Com caneta', type:'checkbox' },
+    { id:'with_box', label:'Com caixa', type:'checkbox' },
+    { id:'warranty', label:'Garantia', type:'checkbox' }
   ],
   computers: [
-    { id:'brand', label:'💻 Marca', type:'select', options:['Apple','Dell','HP','Lenovo','Asus','Acer','MSI','Microsoft','Samsung','Huawei','Toshiba','Sony','LG','Razer','Alienware','Gigabyte','Fujitsu','Outros'] },
-    { id:'type', label:'💻 Tipo', type:'select', options:['Portatil','Desktop','All-in-One','Workstation','Servidor'] },
-    { id:'processor', label:'⚙️ Processador', type:'text' },
-    { id:'ram', label:'🧠 RAM (GB)', type:'number' },
-    { id:'storage_type', label:'💾 Tipo armazenamento', type:'select', options:['HDD','SSD','SSD+HDD'] },
-    { id:'storage_size', label:'💾 Capacidade', type:'text' },
-    { id:'graphics', label:'🎮 Placa grafica', type:'text' },
-    { id:'screen_size', label:'📏 Tamanho ecra', type:'select', options:['13-14 pol','15-16 pol','17+ pol','Sem ecra'] },
-    { id:'os', label:'🖥️ Sistema operativo', type:'select', options:['Windows','macOS','Linux','Chrome OS','Sem SO'] },
-    { id:'with_box', label:'📦 Com caixa', type:'checkbox' },
-    { id:'warranty', label:'🛡️ Garantia', type:'checkbox' }
+    { id:'brand', label:'Marca', type:'select', options:['Apple','Dell','HP','Lenovo','Asus','Acer','MSI','Microsoft','Samsung','Huawei','Toshiba','Sony','LG','Razer','Alienware','Gigabyte','Fujitsu','Outros'] },
+    { id:'type', label:'Tipo', type:'select', options:['Portatil','Desktop','All-in-One','Workstation','Servidor'] },
+    { id:'processor', label:'Processador', type:'text' },
+    { id:'ram', label:'RAM (GB)', type:'number' },
+    { id:'storage_type', label:'Tipo armazenamento', type:'select', options:['HDD','SSD','SSD+HDD'] },
+    { id:'storage_size', label:'Capacidade', type:'text' },
+    { id:'graphics', label:'Placa grafica', type:'text' },
+    { id:'screen_size', label:'Tamanho ecra', type:'select', options:['13-14 pol','15-16 pol','17+ pol','Sem ecra'] },
+    { id:'os', label:'Sistema operativo', type:'select', options:['Windows','macOS','Linux','Chrome OS','Sem SO'] },
+    { id:'with_box', label:'Com caixa', type:'checkbox' },
+    { id:'warranty', label:'Garantia', type:'checkbox' }
   ],
   jobs: [
-    { id:'job_area', label:'💼 Area', type:'select', options:['Tecnologia','Vendas','Administracao','Saude','Educacao','Construcao','Restauracao','Transportes','Outra'] },
-    { id:'contract_type', label:'📄 Contrato', type:'select', options:['Efetivo','Termo Certo','Estagio','Freelance','Part-time'] },
-    { id:'schedule', label:'🕒 Horario', type:'select', options:['Full-time','Part-time','Turnos','Flexivel'] },
-    { id:'remote', label:'🌐 Remoto', type:'select', options:['Presencial','Remoto','Hibrido'] },
-    { id:'salary_min', label:'💰 Salario min. (CVE)', type:'number' },
-    { id:'salary_max', label:'💰 Salario max. (CVE)', type:'number' },
-    { id:'education', label:'🎓 Escolaridade', type:'select', options:['Basico','Secundario','Tecnico','Licenciatura','Mestrado','Doutoramento'] }
+    { id:'job_area', label:'Area', type:'select', options:['Tecnologia','Vendas','Administracao','Saude','Educacao','Construcao','Restauracao','Transportes','Outra'] },
+    { id:'contract_type', label:'Contrato', type:'select', options:['Efetivo','Termo Certo','Estagio','Freelance','Part-time'] },
+    { id:'schedule', label:'Horario', type:'select', options:['Full-time','Part-time','Turnos','Flexivel'] },
+    { id:'remote', label:'Remoto', type:'select', options:['Presencial','Remoto','Hibrido'] },
+    { id:'salary_min', label:'Salario min. (CVE)', type:'number' },
+    { id:'salary_max', label:'Salario max. (CVE)', type:'number' },
+    { id:'education', label:'Escolaridade', type:'select', options:['Basico','Secundario','Tecnico','Licenciatura','Mestrado','Doutoramento'] }
   ]
 };
 
@@ -707,7 +672,7 @@ function renderListings(){
   if(!list.length){grid.innerHTML='';noRes.classList.remove('hidden');return;}
   noRes.classList.add('hidden');
 
-  const placeholderImg = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="400" height="300"%3E%3Crect width="400" height="300" fill="%23f0e6d2"/%3E%3Ctext x="50%25" y="50%25" font-size="48" fill="%230f4c75" text-anchor="middle" dy=".3em"%3E📷%3C/text%3E%3C/svg%3E';
+  const placeholderImg = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="400" height="300"%3E%3Crect width="400" height="300" fill="%23f0e6d2"/%3E%3Ctext x="50%25" y="50%25" font-size="48" fill="%230f4c75" text-anchor="middle" dy=".3em"%3E%3C/svg%3E';
 
   grid.innerHTML=list.map(l=>{
     const isFav=state.favorites.includes(l.id);
@@ -725,7 +690,7 @@ function renderListings(){
           ? `<img src="${mainImage}" alt="${l.title}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" onerror="this.onerror=null; this.src='${placeholderImg}';">`
           : `<div class="w-full h-full img-placeholder"><i class="fas fa-image text-4xl text-ocean-500"></i></div>`
         }
-        ${l.featured?'<span class="absolute top-3 left-3 badge-premium text-white text-xs font-bold px-3 py-1.5 rounded-full">⭐ PREMIUM</span>':''}
+        ${l.featured?'<span class="absolute top-3 left-3 badge-premium text-white text-xs font-bold px-3 py-1.5 rounded-full">PREMIUM</span>':''}
         ${images.length > 1 ? `<span class="absolute bottom-3 right-3 bg-ocean-800/80 backdrop-blur text-white text-xs px-2 py-1 rounded-full flex items-center gap-1"><i class="fas fa-images"></i> ${images.length}</span>` : ''}
         <button onclick="event.stopPropagation();toggleFavorite(${l.id})" class="absolute top-3 right-3 w-9 h-9 rounded-full bg-white/90 dark:bg-ocean-800/90 backdrop-blur shadow-md flex items-center justify-center hover:scale-110 transition-transform">
           <i class="fas fa-heart ${isFav?'text-sun-500 fill-sun-500':'text-ocean-500'} text-sm"></i>
@@ -789,16 +754,16 @@ function setConditionFilter(value, e){
 function getLocationAndFilter(){
   if(!navigator.geolocation){showToast('Geolocalizacao nao suportada','error');return;}
   const locDiv=document.getElementById('userLocation');
-  locDiv.querySelector('span').textContent='📡 A obter localizacao...';
+  locDiv.querySelector('span').textContent='A obter localizacao...';
   locDiv.classList.remove('hidden');
   navigator.geolocation.getCurrentPosition(
     (position)=>{
       state.userLocation={lat:position.coords.latitude,lng:position.coords.longitude};
-      locDiv.querySelector('span').textContent=`📍 ${state.userLocation.lat.toFixed(4)}, ${state.userLocation.lng.toFixed(4)}`;
+      locDiv.querySelector('span').textContent=`${state.userLocation.lat.toFixed(4)}, ${state.userLocation.lng.toFixed(4)}`;
       renderListings();
       showToast('Localizacao atualizada!','success');
     },
-    (error)=>{locDiv.querySelector('span').textContent='❌ Erro ao obter localizacao';showToast('Erro ao obter localizacao','error');}
+    (error)=>{locDiv.querySelector('span').textContent='Erro ao obter localizacao';showToast('Erro ao obter localizacao','error');}
   );
 }
 
@@ -901,14 +866,14 @@ function openListing(id){
         ${specificFilters.filter(f => detalhes[f.id] !== undefined && detalhes[f.id] !== '' && detalhes[f.id] !== false).map(f => `
           <div class="flex items-center gap-2 px-3 py-2 bg-sand-50 dark:bg-ocean-700 rounded-lg">
             <span class="text-xs text-ocean-500">${f.label.replace(/^[^\s]+\s/,'')}</span>
-            <span class="text-sm font-semibold ml-auto">${typeof detalhes[f.id] === 'boolean' ? (detalhes[f.id] ? '✅' : '❌') : detalhes[f.id]}</span>
+            <span class="text-sm font-semibold ml-auto">${typeof detalhes[f.id] === 'boolean' ? (detalhes[f.id] ? 'Sim' : 'Nao') : detalhes[f.id]}</span>
           </div>
         `).join('')}
       </div>
     </div>
   ` : '';
 
-  const placeholderImg = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="400" height="400"%3E%3Crect width="400" height="400" fill="%23f0e6d2"/%3E%3Ctext x="50%25" y="50%25" font-size="64" fill="%230f4c75" text-anchor="middle" dy=".3em"%3E📷%3C/text%3E%3C/svg%3E';
+  const placeholderImg = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="400" height="400"%3E%3Crect width="400" height="400" fill="%23f0e6d2"/%3E%3Ctext x="50%25" y="50%25" font-size="64" fill="%230f4c75" text-anchor="middle" dy=".3em"%3E%3C/svg%3E';
 
   const galleryHtml = hasImages ? `
     <div class="space-y-3">
@@ -931,7 +896,7 @@ function openListing(id){
     <div class="grid lg:grid-cols-2 gap-8">
       <div>${galleryHtml}</div>
       <div>
-        ${l.featured?'<span class="inline-block badge-premium text-white text-xs font-bold px-3 py-1.5 rounded-full mb-3">⭐ PREMIUM</span>':''}
+        ${l.featured?'<span class="inline-block badge-premium text-white text-xs font-bold px-3 py-1.5 rounded-full mb-3">PREMIUM</span>':''}
         <h1 class="font-display text-3xl font-bold mb-3">${l.title}</h1>
         <div class="flex items-center gap-3 mb-6">
           <div class="text-4xl font-bold price-text">${formatPrice(l.price)}</div>
@@ -1060,7 +1025,7 @@ function openCreateListing(editId=null){
       <div id="createSpecificFields"></div>
       
       <div>
-        <label class="block text-sm font-semibold mb-2">📷 Fotos do Produto <span class="text-red-500">*</span><span class="text-xs text-ocean-500 font-normal ml-2">(Minimo 1, maximo 10 fotos)</span></label>
+        <label class="block text-sm font-semibold mb-2">Fotos do Produto <span class="text-red-500">*</span><span class="text-xs text-ocean-500 font-normal ml-2">(Minimo 1, maximo 10 fotos)</span></label>
         <p class="text-xs text-ocean-500 mb-3">As imagens serao comprimidas automaticamente. A primeira foto sera a capa do anuncio.</p>
         <div class="border-2 border-dashed border-sand-200 dark:border-ocean-700 rounded-xl p-6 text-center hover:border-sun-400 transition-colors cursor-pointer" onclick="document.getElementById('photoInput').click()">
           <input type="file" id="photoInput" accept="image/*" multiple class="hidden" onchange="handleMultipleImages(this.files)">
@@ -1103,7 +1068,7 @@ function renderImagePreview() {
   preview.innerHTML = window._tempImages.map((img, index) => `
     <div class="relative group aspect-square rounded-xl overflow-hidden border-2 ${index === 0 ? 'border-sun-400' : 'border-sand-200 dark:border-ocean-700'}">
       <img src="${img}" class="w-full h-full object-cover">
-      ${index === 0 ? '<div class="absolute top-2 left-2 bg-sun-400 text-ocean-900 text-xs px-2 py-1 rounded-full font-semibold"><i class="fas fa-star"></i> Capa</div>' : ''}
+      ${index === 0 ? '<div class="absolute top-2 left-2 bg-sun-400 text-ocean-900 text-xs px-2 py-1 rounded-full font-semibold">Capa</div>' : ''}
       <div class="absolute inset-0 bg-ocean-900/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
         ${index > 0 ? `<button type="button" onclick="moveImage(${index}, -1)" class="w-8 h-8 rounded-full bg-white text-ocean-900 hover:bg-sand-100 flex items-center justify-center" title="Mover para esquerda"><i class="fas fa-arrow-left text-sm"></i></button>` : ''}
         ${index < window._tempImages.length - 1 ? `<button type="button" onclick="moveImage(${index}, 1)" class="w-8 h-8 rounded-full bg-white text-ocean-900 hover:bg-sand-100 flex items-center justify-center" title="Mover para direita"><i class="fas fa-arrow-right text-sm"></i></button>` : ''}
@@ -1601,7 +1566,7 @@ window.handlePublish = async function(e){
     window._tempImages = [];
     await carregarDoSupabase();
   } catch(err){
-    console.error('❌ Erro:', err);
+    console.error('Erro:', err);
     showToast('Erro: '+err.message,'error');
   } finally {
     submitBtn.innerHTML = textoOriginal;
@@ -1863,7 +1828,7 @@ sb.channel('listings')
   }
 })();
 
-console.log('%c🇨🇻 CV Mercado','font-size:24px;font-weight:bold;color:#f7b267');
+console.log('%cCV Mercado','font-size:24px;font-weight:bold;color:#f7b267');
 console.log('Plataforma carregada com sucesso!');
 </script>
 </body>
