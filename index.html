@@ -1,0 +1,1835 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="CV Mercado - O maior marketplace de Cabo Verde. Compre e venda em todas as ilhas.">
+<meta name="theme-color" content="#0f4c75">
+<title>CV Mercado - Marketplace de Cabo Verde</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='45' fill='%230f4c75'/><text x='50' y='68' font-size='40' text-anchor='middle' fill='%23f7b267' font-family='Arial' font-weight='bold'>CV</text></svg>">
+<link rel="manifest" href="data:application/json,{&quot;name&quot;:&quot;CV Mercado&quot;,&quot;short_name&quot;:&quot;CVM&quot;,&quot;start_url&quot;:&quot;.&quot;,&quot;display&quot;:&quot;standalone&quot;,&quot;background_color&quot;:&quot;%230f4c75&quot;,&quot;theme_color&quot;:&quot;%230f4c75&quot;}">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+tailwind.config = {
+  darkMode: 'class',
+  theme: {
+    extend: {
+      fontFamily: { sans: ['DM Sans', 'sans-serif'], display: ['Plus Jakarta Sans', 'sans-serif'] },
+      colors: {
+        ocean: { 50:'#f0f7ff', 100:'#e0efff', 200:'#b8dcff', 500:'#0f4c75', 600:'#0a3d5c', 700:'#072d44', 800:'#051f2e', 900:'#031319' },
+        sun: { 50:'#fff9ed', 100:'#fff0d4', 200:'#ffe0a8', 400:'#f7b267', 500:'#f4845f', 600:'#e85d3c' },
+        sand: { 50:'#fdfbf7', 100:'#f8f3ea', 200:'#f0e6d2' }
+      },
+      boxShadow: {
+        'soft': '0 2px 15px -3px rgba(15,76,117,0.08)',
+        'medium': '0 4px 20px -2px rgba(15,76,117,0.12)',
+        'large': '0 10px 40px -10px rgba(15,76,117,0.15)',
+        'glow': '0 0 20px rgba(247,178,103,0.3)',
+        'sun': '0 4px 15px -3px rgba(247,178,103,0.4)'
+      }
+    }
+  }
+}
+</script>
+<style>
+* { box-sizing: border-box; }
+body { font-family: 'DM Sans', sans-serif; -webkit-font-smoothing: antialiased; }
+.font-display { font-family: 'Plus Jakarta Sans', sans-serif; }
+.fade-in { animation: fadeIn 0.4s cubic-bezier(0.4,0,0.2,1); }
+@keyframes fadeIn { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:translateY(0)} }
+.modal-backdrop { background: rgba(3,19,25,0.7); backdrop-filter: blur(12px); }
+.glass { background: rgba(253,251,247,0.92); backdrop-filter: blur(12px); }
+.dark .glass { background: rgba(5,31,46,0.92); }
+.hero-pattern { background: linear-gradient(135deg, #0f4c75 0%, #072d44 100%); position: relative; overflow: hidden; }
+.hero-pattern::before { content:''; position:absolute; inset:0; background-image: radial-gradient(circle at 20% 80%, rgba(247,178,103,0.15) 0%, transparent 50%), radial-gradient(circle at 80% 20%, rgba(244,132,95,0.1) 0%, transparent 50%); }
+.hero-pattern::after { content:''; position:absolute; bottom:0; left:0; right:0; height:80px; background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 120'%3E%3Cpath d='M0,60 C300,100 600,20 1200,60 L1200,120 L0,120 Z' fill='%23fdfbf7'/%3E%3C/svg%3E") no-repeat bottom; background-size: cover; }
+.dark .hero-pattern::after { background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 120'%3E%3Cpath d='M0,60 C300,100 600,20 1200,60 L1200,120 L0,120 Z' fill='%23031319'/%3E%3C/svg%3E") no-repeat bottom; background-size: cover; }
+.cat-card { transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); position: relative; overflow: hidden; }
+.cat-card::before { content:''; position:absolute; inset:0; background: linear-gradient(135deg, transparent 0%, rgba(247,178,103,0.05) 100%); opacity: 0; transition: opacity 0.3s; }
+.cat-card:hover::before { opacity: 1; }
+.cat-card:hover { transform: translateY(-8px) scale(1.02); box-shadow: 0 20px 40px -15px rgba(15,76,117,0.2); }
+.cat-card.active { background: linear-gradient(135deg, #0f4c75 0%, #072d44 100%); color: white; border-color: transparent; }
+.cat-card.active .cat-icon { background: rgba(247,178,103,0.2); color: #f7b267; }
+.cat-card.active .cat-name { color: white; }
+.listing-card { transition: all 0.3s ease; }
+.listing-card:hover { transform: translateY(-4px); box-shadow: 0 25px 50px -12px rgba(15,76,117,0.15); }
+.btn-primary { background: linear-gradient(135deg, #f7b267 0%, #f4845f 100%); color: white; transition: all 0.3s ease; box-shadow: 0 4px 15px -3px rgba(247,178,103,0.4); position: relative; overflow: hidden; }
+.btn-primary::before { content:''; position:absolute; top:0; left:-100%; width:100%; height:100%; background: linear-gradient(90deg,transparent,rgba(255,255,255,0.3),transparent); transition: left 0.5s ease; }
+.btn-primary:hover::before { left: 100%; }
+.btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 25px -5px rgba(247,178,103,0.5); }
+.btn-ocean { background: linear-gradient(135deg, #0f4c75 0%, #072d44 100%); color: white; transition: all 0.3s ease; }
+.btn-ocean:hover { transform: translateY(-2px); box-shadow: 0 8px 25px -5px rgba(15,76,117,0.4); }
+.search-input { transition: all 0.3s ease; }
+.search-input:focus { box-shadow: 0 0 0 3px rgba(247,178,103,0.2); border-color: #f7b267; }
+.filter-chip { transition: all 0.2s ease; }
+.filter-chip:hover { transform: translateY(-1px); }
+.filter-chip.active { background: linear-gradient(135deg, #0f4c75 0%, #072d44 100%); color: white; border-color: transparent; }
+.input-cv { transition: all 0.3s ease; }
+.input-cv:focus { box-shadow: 0 0 0 3px rgba(15,76,117,0.1); border-color: #0f4c75; }
+::-webkit-scrollbar { width:8px; height:8px; }
+::-webkit-scrollbar-track { background:transparent; }
+::-webkit-scrollbar-thumb { background:linear-gradient(180deg,#0f4c75,#072d44); border-radius:4px; }
+.img-placeholder { background: linear-gradient(135deg,#f0e6d2 0%,#e0efff 100%); display:flex; align-items:center; justify-content:center; }
+.dark .img-placeholder { background: linear-gradient(135deg,#072d44 0%,#051f2e 100%); }
+.skeleton { background: linear-gradient(90deg, #f8f3ea 25%, #f0e6d2 50%, #f8f3ea 75%); background-size: 200% 100%; animation: loading 1.5s infinite; }
+.dark .skeleton { background: linear-gradient(90deg, #072d44 25%, #051f2e 50%, #072d44 75%); background-size: 200% 100%; }
+@keyframes loading { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
+.line-clamp-2 { display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
+.badge-premium { background: linear-gradient(135deg, #f7b267 0%, #f4845f 100%); box-shadow: 0 4px 12px rgba(247,178,103,0.4); }
+.price-text { color: #0f4c75; font-weight: 800; }
+.dark .price-text { color: #f7b267; }
+.auth-tab { transition: all 0.3s ease; }
+.auth-tab.active { background: linear-gradient(135deg, #0f4c75 0%, #072d44 100%); color: white; }
+.offline-banner { background: #f4845f; color: white; padding: 8px; text-align: center; font-size: 14px; display: none; }
+.offline-banner.show { display: block; }
+.whatsapp-support { background: linear-gradient(135deg,#25D366 0%,#128C7E 100%); transition: all 0.3s ease; }
+.whatsapp-support:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(37,211,102,0.5); }
+.social-btn { transition: all 0.3s ease; }
+.social-btn:hover { transform: translateY(-2px); box-shadow: 0 10px 20px -5px rgba(0,0,0,0.1); }
+.gradient-text { background: linear-gradient(135deg,#f7b267 0%,#f4845f 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+</style>
+</head>
+<body class="bg-sand-50 dark:bg-ocean-900 text-ocean-800 dark:text-sand-100 min-h-screen transition-colors duration-300">
+
+<div id="offlineBanner" class="offline-banner">
+  <i class="fas fa-wifi-slash"></i> Estas offline. Algumas funcionalidades podem nao estar disponiveis.
+</div>
+
+<nav class="sticky top-0 z-50 glass border-b border-sand-200 dark:border-ocean-700 shadow-sm">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex items-center justify-between h-16 lg:h-20">
+      <a href="#" onclick="goHome()" class="flex items-center gap-3 group">
+        <div class="w-10 h-10 rounded-full bg-ocean-500 flex items-center justify-center text-sun-400 font-bold text-lg group-hover:scale-110 transition-transform shadow-lg">
+          <i class="fas fa-sun"></i>
+        </div>
+        <div class="hidden sm:block">
+          <div class="font-display font-bold text-xl text-ocean-700 dark:text-sand-100">CV Mercado</div>
+          <div class="text-xs text-ocean-500 dark:text-sand-200">Cabo Verde</div>
+        </div>
+      </a>
+      <div class="flex-1 max-w-2xl mx-4 lg:mx-8">
+        <div class="relative group">
+          <input id="searchInput" type="text" placeholder="O que procuras hoje?" class="search-input w-full pl-12 pr-4 py-3 rounded-full border-2 border-sand-200 dark:border-ocean-700 bg-white dark:bg-ocean-800 focus:outline-none">
+          <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-ocean-500 group-focus-within:text-sun-500 transition-colors"></i>
+        </div>
+      </div>
+      <div class="flex items-center gap-2 sm:gap-3">
+        <select id="langSelect" class="hidden sm:block px-3 py-2 rounded-full border border-sand-200 dark:border-ocean-700 bg-white dark:bg-ocean-800 text-sm font-medium cursor-pointer">
+          <option value="pt">PT</option><option value="en">EN</option>
+        </select>
+        <button onclick="toggleTheme()" class="p-2.5 rounded-full bg-sand-100 dark:bg-ocean-800 hover:bg-sand-200 dark:hover:bg-ocean-700 transition-colors" title="Alternar tema">
+          <i class="fas fa-moon dark:hidden text-ocean-700"></i>
+          <i class="fas fa-sun hidden dark:block text-sun-400"></i>
+        </button>
+        <button onclick="openFavorites()" class="p-2.5 rounded-full bg-sand-100 dark:bg-ocean-800 hover:bg-sand-200 dark:hover:bg-ocean-700 transition-colors relative" title="Favoritos">
+          <i class="fas fa-heart text-ocean-700 dark:text-sand-200"></i>
+          <span id="favCount" class="absolute -top-1 -right-1 bg-sun-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center font-bold hidden">0</span>
+        </button>
+        <button onclick="openMessages()" class="p-2.5 rounded-full bg-sand-100 dark:bg-ocean-800 hover:bg-sand-200 dark:hover:bg-ocean-700 transition-colors relative" title="Mensagens">
+          <i class="fas fa-comment text-ocean-700 dark:text-sand-200"></i>
+          <span id="msgCount" class="absolute -top-1 -right-1 bg-ocean-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center font-bold hidden">0</span>
+        </button>
+        <button id="authBtn" onclick="openAuth()" class="hidden sm:flex px-5 py-2.5 rounded-full btn-ocean font-semibold text-sm">Entrar</button>
+        <button onclick="openCreateListing()" class="flex items-center gap-2 px-5 py-2.5 rounded-full btn-primary font-semibold text-sm">
+          <i class="fas fa-plus"></i><span class="hidden sm:inline">Publicar</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<div class="hero-pattern text-white py-20 lg:py-28">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 pb-20">
+    <div class="text-center max-w-3xl mx-auto">
+      <div class="inline-flex items-center gap-2 bg-white/10 backdrop-blur px-4 py-2 rounded-full mb-6 border border-white/20">
+        <i class="fas fa-sparkles text-sun-400"></i>
+        <span class="text-sm font-medium">O marketplace das 10 ilhas</span>
+      </div>
+      <h1 class="font-display text-4xl sm:text-5xl lg:text-6xl font-bold mb-6 leading-tight">
+        Compra e vende<br>
+        <span class="gradient-text">em todo Cabo Verde</span>
+      </h1>
+      <p class="text-lg text-white/80 mb-10 max-w-xl mx-auto">Descobre milhares de produtos e servicos nas ilhas de Santiago, Sao Vicente, Sal e muito mais.</p>
+      <div class="grid grid-cols-3 gap-4 max-w-2xl mx-auto">
+        <div class="bg-white/10 backdrop-blur rounded-2xl p-5 border border-white/10">
+          <div class="text-3xl font-bold text-sun-400" id="totalListings">0</div>
+          <div class="text-sm text-white/70 mt-1">Anuncios</div>
+        </div>
+        <div class="bg-white/10 backdrop-blur rounded-2xl p-5 border border-white/10">
+          <div class="text-3xl font-bold text-sun-400">10</div>
+          <div class="text-sm text-white/70 mt-1">Ilhas</div>
+        </div>
+        <div class="bg-white/10 backdrop-blur rounded-2xl p-5 border border-white/10">
+          <div class="text-3xl font-bold text-sun-400">22</div>
+          <div class="text-sm text-white/70 mt-1">Categorias</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+  
+  <section class="mb-12">
+    <div class="flex items-center justify-between mb-6">
+      <h2 class="font-display text-2xl font-bold text-ocean-800 dark:text-sand-100">Explora por categoria</h2>
+      <button onclick="clearFilters()" class="text-sm text-ocean-500 hover:text-ocean-700 font-medium">Ver todas</button>
+    </div>
+    <div id="categoriesGrid" class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-7 gap-3"></div>
+  </section>
+
+  <section class="mb-8 bg-white dark:bg-ocean-800 rounded-3xl shadow-soft border border-sand-200 dark:border-ocean-700 p-6 lg:p-8">
+    <div class="flex items-center gap-3 mb-6">
+      <div class="w-10 h-10 rounded-full bg-sun-50 dark:bg-sun-900/20 flex items-center justify-center">
+        <i class="fas fa-sliders text-sun-500"></i>
+      </div>
+      <h3 class="font-display text-xl font-bold">Filtros Avancados</h3>
+    </div>
+    
+    <div class="mb-6">
+      <h4 class="font-semibold text-sm text-ocean-500 dark:text-sand-200 mb-3 uppercase tracking-wider">Pesquisa e Localizacao</h4>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
+        <select id="filterIsland" class="input-cv px-4 py-3 rounded-xl border border-sand-200 dark:border-ocean-700 bg-sand-50 dark:bg-ocean-900 text-sm cursor-pointer"><option value="">Todas as ilhas</option></select>
+        <select id="filterMunicipality" class="input-cv px-4 py-3 rounded-xl border border-sand-200 dark:border-ocean-700 bg-sand-50 dark:bg-ocean-900 text-sm cursor-pointer"><option value="">Todos os concelhos</option></select>
+        <select id="filterCategory" class="input-cv px-4 py-3 rounded-xl border border-sand-200 dark:border-ocean-700 bg-sand-50 dark:bg-ocean-900 text-sm cursor-pointer"><option value="">Todas categorias</option></select>
+        <select id="filterDistance" class="input-cv px-4 py-3 rounded-xl border border-sand-200 dark:border-ocean-700 bg-sand-50 dark:bg-ocean-900 text-sm cursor-pointer"><option value="">Qualquer distancia</option><option value="10">Ate 10 km</option><option value="25">Ate 25 km</option><option value="50">Ate 50 km</option><option value="100">Ate 100 km</option></select>
+        <select id="filterSort" class="input-cv px-4 py-3 rounded-xl border border-sand-200 dark:border-ocean-700 bg-sand-50 dark:bg-ocean-900 text-sm cursor-pointer"><option value="latest">Mais recentes</option><option value="oldest">Mais antigos</option><option value="price_asc">Menor preco</option><option value="price_desc">Maior preco</option><option value="views">Mais visualizados</option><option value="distance">Mais proximo</option></select>
+      </div>
+    </div>
+
+    <div id="specificFiltersContainer" class="mb-6 hidden">
+      <div class="flex items-center gap-2 mb-3">
+        <i class="fas fa-star text-sun-400"></i>
+        <h4 class="font-semibold text-sm text-ocean-500 dark:text-sand-200 uppercase tracking-wider">Filtros Especificos: <span id="specificFiltersTitle" class="text-ocean-500"></span></h4>
+      </div>
+      <div id="specificFilters" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3"></div>
+    </div>
+
+    <div class="mb-6">
+      <h4 class="font-semibold text-sm text-ocean-500 dark:text-sand-200 mb-3 uppercase tracking-wider">Preco</h4>
+      <div class="flex items-center gap-3">
+        <input id="filterPriceMin" type="number" placeholder="Min" class="input-cv w-32 px-3 py-2 rounded-lg border border-sand-200 dark:border-ocean-700 bg-sand-50 dark:bg-ocean-900 text-sm">
+        <span class="text-ocean-500">-</span>
+        <input id="filterPriceMax" type="number" placeholder="Max" class="input-cv w-32 px-3 py-2 rounded-lg border border-sand-200 dark:border-ocean-700 bg-sand-50 dark:bg-ocean-900 text-sm">
+        <span class="text-sm font-medium text-ocean-600 dark:text-sand-200">CVE</span>
+      </div>
+    </div>
+
+    <div class="mb-6">
+      <h4 class="font-semibold text-sm text-ocean-500 dark:text-sand-200 mb-3 uppercase tracking-wider">Data do anuncio</h4>
+      <div class="flex flex-wrap gap-2" id="dateFilters">
+        <button onclick="setDateFilter('all', event)" class="filter-chip active px-4 py-2 rounded-full border border-sand-200 dark:border-ocean-700 bg-sand-50 dark:bg-ocean-900 text-sm font-medium">Todos</button>
+        <button onclick="setDateFilter('today', event)" class="filter-chip px-4 py-2 rounded-full border border-sand-200 dark:border-ocean-700 bg-sand-50 dark:bg-ocean-900 text-sm font-medium">Hoje</button>
+        <button onclick="setDateFilter('3days', event)" class="filter-chip px-4 py-2 rounded-full border border-sand-200 dark:border-ocean-700 bg-sand-50 dark:bg-ocean-900 text-sm font-medium">Ultimos 3 dias</button>
+        <button onclick="setDateFilter('week', event)" class="filter-chip px-4 py-2 rounded-full border border-sand-200 dark:border-ocean-700 bg-sand-50 dark:bg-ocean-900 text-sm font-medium">Ultima semana</button>
+        <button onclick="setDateFilter('month', event)" class="filter-chip px-4 py-2 rounded-full border border-sand-200 dark:border-ocean-700 bg-sand-50 dark:bg-ocean-900 text-sm font-medium">Ultimo mes</button>
+      </div>
+    </div>
+
+    <div class="mb-6">
+      <h4 class="font-semibold text-sm text-ocean-500 dark:text-sand-200 mb-3 uppercase tracking-wider">Condicao</h4>
+      <div class="flex flex-wrap gap-2" id="conditionFilters">
+        <button onclick="setConditionFilter('', event)" class="filter-chip active px-4 py-2 rounded-full border border-sand-200 dark:border-ocean-700 bg-sand-50 dark:bg-ocean-900 text-sm font-medium">Todas</button>
+        <button onclick="setConditionFilter('new', event)" class="filter-chip px-4 py-2 rounded-full border border-sand-200 dark:border-ocean-700 bg-sand-50 dark:bg-ocean-900 text-sm font-medium">Novo</button>
+        <button onclick="setConditionFilter('like_new', event)" class="filter-chip px-4 py-2 rounded-full border border-sand-200 dark:border-ocean-700 bg-sand-50 dark:bg-ocean-900 text-sm font-medium">Como Novo</button>
+        <button onclick="setConditionFilter('good', event)" class="filter-chip px-4 py-2 rounded-full border border-sand-200 dark:border-ocean-700 bg-sand-50 dark:bg-ocean-900 text-sm font-medium">Bom Estado</button>
+        <button onclick="setConditionFilter('used', event)" class="filter-chip px-4 py-2 rounded-full border border-sand-200 dark:border-ocean-700 bg-sand-50 dark:bg-ocean-900 text-sm font-medium">Usado</button>
+        <button onclick="setConditionFilter('parts', event)" class="filter-chip px-4 py-2 rounded-full border border-sand-200 dark:border-ocean-700 bg-sand-50 dark:bg-ocean-900 text-sm font-medium">Para Pecas</button>
+      </div>
+    </div>
+
+    <div class="mb-6">
+      <h4 class="font-semibold text-sm text-ocean-500 dark:text-sand-200 mb-3 uppercase tracking-wider">Midia</h4>
+      <div class="flex flex-wrap gap-2">
+        <label class="filter-chip px-4 py-2 rounded-full border border-sand-200 dark:border-ocean-700 bg-sand-50 dark:bg-ocean-900 text-sm font-medium cursor-pointer flex items-center gap-2">
+          <input type="checkbox" id="filterNegotiable" class="rounded text-ocean-500"> Negociavel
+        </label>
+      </div>
+    </div>
+
+    <div class="flex flex-wrap items-center gap-3 pt-6 border-t border-sand-200 dark:border-ocean-700">
+      <div class="flex-1"></div>
+      <button onclick="getLocationAndFilter()" class="flex items-center gap-2 px-5 py-3 rounded-full bg-green-500 hover:bg-green-600 text-white font-medium text-sm transition-all shadow-lg shadow-green-500/30"><i class="fas fa-location-crosshairs"></i><span class="hidden sm:inline">Minha Localizacao</span></button>
+      <button onclick="applyFilters()" class="flex items-center gap-2 px-6 py-3 rounded-full btn-ocean font-semibold text-sm"><i class="fas fa-check"></i>Aplicar</button>
+      <button onclick="clearFilters()" class="px-5 py-3 rounded-full border border-sand-200 dark:border-ocean-700 hover:bg-sand-100 dark:hover:bg-ocean-700 font-medium text-sm transition-all">Limpar</button>
+    </div>
+    <div id="userLocation" class="hidden mt-4 p-3 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-xl text-sm text-green-700 dark:text-green-400 flex items-center gap-2"><i class="fas fa-location-dot"></i><span></span></div>
+  </section>
+
+  <section>
+    <div class="flex items-center justify-between mb-6">
+      <h2 class="font-display text-2xl font-bold">Anuncios <span class="text-ocean-500 font-normal text-lg">(<span id="listingCount">0</span>)</span></h2>
+    </div>
+    <div id="listingsGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5"></div>
+    <div id="noResults" class="hidden text-center py-20">
+      <div class="w-24 h-24 mx-auto mb-6 rounded-full bg-sand-100 dark:bg-ocean-800 flex items-center justify-center">
+        <i class="fas fa-search text-4xl text-ocean-500"></i>
+      </div>
+      <h3 class="font-display text-xl font-bold mb-2">Nenhum anuncio encontrado</h3>
+      <p class="text-ocean-500">Tenta ajustar os filtros ou procura por outra coisa</p>
+    </div>
+  </section>
+</main>
+
+<footer class="bg-ocean-800 dark:bg-ocean-900 text-sand-200 mt-20">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+      <div>
+        <div class="flex items-center gap-3 mb-4">
+          <div class="w-10 h-10 rounded-full bg-ocean-500 flex items-center justify-center text-sun-400 font-bold">
+            <i class="fas fa-sun"></i>
+          </div>
+          <span class="font-display font-bold text-xl text-white">CV Mercado</span>
+        </div>
+        <p class="text-sm text-sand-200/70">O maior marketplace de Cabo Verde. Compra e venda em todas as 10 ilhas de forma segura e rapida.</p>
+      </div>
+      <div>
+        <h4 class="font-bold text-white mb-4">Pagamentos</h4>
+        <div class="space-y-2 text-sm">
+          <div><i class="fas fa-mobile-alt text-sun-400 mr-2"></i>CVMovel</div>
+          <div><i class="fas fa-university text-sun-400 mr-2"></i>BCA</div>
+          <div><i class="fas fa-piggy-bank text-sun-400 mr-2"></i>Caixa Economica</div>
+          <div><i class="fab fa-cc-visa text-sun-400 mr-2"></i>Visa</div>
+          <div><i class="fab fa-cc-mastercard text-sun-400 mr-2"></i>Mastercard</div>
+        </div>
+      </div>
+      <div>
+        <h4 class="font-bold text-white mb-4">Apoio</h4>
+        <div class="space-y-2 text-sm">
+          <div><i class="fas fa-envelope text-sun-400 mr-2"></i>ajuda@cvmercado.cv</div>
+          <div><i class="fas fa-phone text-sun-400 mr-2"></i>+238 000 00 00</div>
+          <div><i class="fas fa-clock text-sun-400 mr-2"></i>Seg-Sex: 8h-18h</div>
+        </div>
+      </div>
+      <div>
+        <h4 class="font-bold text-white mb-4">Contacto e Suporte</h4>
+        <p class="text-sm text-sand-200/70 mb-4">Precisas de ajuda? Contacta-nos via WhatsApp.</p>
+        <a id="whatsappSupport" href="https://wa.me/2380000000" target="_blank" rel="noopener noreferrer" class="whatsapp-support inline-flex items-center gap-2 px-4 py-2.5 rounded-full text-white font-semibold text-sm"><i class="fab fa-whatsapp text-lg"></i>Suporte WhatsApp</a>
+        <div class="flex gap-2 mt-4">
+          <a href="#" class="w-9 h-9 rounded-full bg-ocean-700 hover:bg-sun-400 hover:text-ocean-900 flex items-center justify-center transition-all"><i class="fab fa-facebook-f"></i></a>
+          <a href="#" class="w-9 h-9 rounded-full bg-ocean-700 hover:bg-sun-400 hover:text-ocean-900 flex items-center justify-center transition-all"><i class="fab fa-instagram"></i></a>
+          <a href="#" class="w-9 h-9 rounded-full bg-ocean-700 hover:bg-sun-400 hover:text-ocean-900 flex items-center justify-center transition-all"><i class="fab fa-twitter"></i></a>
+        </div>
+      </div>
+    </div>
+    <div class="border-t border-ocean-700 mt-8 pt-8 text-center text-sm text-sand-200/60">
+      <p> 2026 CV Mercado - Feito com <i class="fas fa-heart text-sun-400 mx-1"></i> em Cabo Verde</p>
+    </div>
+  </div>
+</footer>
+
+<div id="modalRoot"></div>
+<div id="toast" class="fixed bottom-6 left-1/2 -translate-x-1/2 bg-ocean-800 dark:bg-sand-100 text-white dark:text-ocean-800 px-6 py-3 rounded-full shadow-lg z-50 hidden fade-in font-medium flex items-center gap-2">
+  <i class="fas fa-check-circle text-green-400"></i><span></span>
+</div>
+
+<script>
+const WHATSAPP_NUMBER = '2380000000';
+document.getElementById('whatsappSupport').href = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent('Ola! Preciso de ajuda com o CV Mercado.')}`;
+
+const supabaseUrl = 'https://eqxaywynztzbcbjlimmv.supabase.co';
+const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVxeGF5d3luenR6YmNiamxpbW12Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEwMzc5NTIsImV4cCI6MjA5NjYxMzk1Mn0.q_JlMNUjP8xTJH40TW696wY9IOjDK2zo5qXR3K6eSbk';
+const sb = supabase.createClient(supabaseUrl, supabaseKey);
+
+const EXEMPLOS = [
+  {id:1001,titulo:'iPhone 13 Pro 128GB',preco:45000,ilha:'saovicente',local:'Mindelo',categoria:'phones',condicao:'like_new',negociavel:true,img:'https://images.unsplash.com/photo-1632661674596-df8be070a5c5?w=400',descricao:'iPhone 13 Pro em excelente estado, com caixa e acessorios. Bateria 92%.',detalhes:'{"brand":"Apple","storage":"128GB"}',created_at:new Date(Date.now()-3600000).toISOString()},
+  {id:1002,titulo:'Toyota Hilux 2019 4x4',preco:2500000,ilha:'santiago',local:'Praia',categoria:'cars',condicao:'good',negociavel:false,img:'https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?w=400',descricao:'Toyota Hilux 4x4, 80.000 km, manutencao em dia.',detalhes:'{"brand":"Toyota","fuel":"Diesel","transmission":"Manual"}',created_at:new Date(Date.now()-86400000).toISOString()},
+  {id:1003,titulo:'Apartamento T2 Palmarejo Vista Mar',preco:15000000,ilha:'santiago',local:'Palmarejo',categoria:'realestate',condicao:'new',negociavel:true,img:'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=400',descricao:'Apartamento T2 novo, 2 WC, varanda, vista mar.',detalhes:'{"property_type":"Apartamento","bedrooms":2,"bathrooms":2}',created_at:new Date(Date.now()-172800000).toISOString()},
+  {id:1004,titulo:'Samsung Galaxy S22 Ultra 256GB',preco:38000,ilha:'sal',local:'Santa Maria',categoria:'phones',condicao:'used',negociavel:true,img:'https://images.unsplash.com/photo-1610945415295-d9bbf067e59c?w=400',descricao:'Samsung S22 Ultra 5G, 256GB.',detalhes:'{"brand":"Samsung","storage":"256GB"}',created_at:new Date(Date.now()-259200000).toISOString()},
+  {id:1005,titulo:'Motocicleta Honda CG 125 2020',preco:180000,ilha:'saovicente',local:'Mindelo',categoria:'motorcycles',condicao:'good',negociavel:false,img:'https://images.unsplash.com/photo-1558981806-ec527fa84c39?w=400',descricao:'Honda CG 125, 2020, 15.000 km.',detalhes:'{"brand":"Honda"}',created_at:new Date(Date.now()-345600000).toISOString()},
+  {id:1006,titulo:'MacBook Pro M1 2021 8GB/256GB',preco:120000,ilha:'santiago',local:'Praia',categoria:'computers',condicao:'like_new',negociavel:true,img:'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=400',descricao:'MacBook Pro M1, 8GB RAM, 256GB SSD.',detalhes:'{"brand":"Apple","ram":8}',created_at:new Date(Date.now()-432000000).toISOString()},
+  {id:1007,titulo:'iPad Pro 11" 256GB',preco:95000,ilha:'santiago',local:'Praia',categoria:'tablets',condicao:'like_new',negociavel:true,img:'https://images.unsplash.com/photo-1544244015-0df4b3ffc6b0?w=400',descricao:'iPad Pro 11 polegadas, 256GB, com caneta Apple Pencil.',detalhes:'{"brand":"Apple","storage":"256GB","with_pen":true}',created_at:new Date(Date.now()-500000000).toISOString()},
+  {id:1008,titulo:'Vestido de Festa Vermelho M',preco:8500,ilha:'saovicente',local:'Mindelo',categoria:'fashion',condicao:'new',negociavel:false,img:'https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=400',descricao:'Vestido de festa novo, nunca usado.',detalhes:'{}',created_at:new Date(Date.now()-604800000).toISOString()}
+];
+
+const CATEGORY_FILTERS = {
+  cars: [
+    { id:'brand', label:'Marca', type:'select', options:['Toyota','Honda','Nissan','Hyundai','Kia','Mitsubishi','Suzuki','Mazda','Subaru','Ford','Chevrolet','Volkswagen','BMW','Mercedes-Benz','Audi','Porsche','Ferrari','Lamborghini','Peugeot','Renault','Citroen','Fiat','Opel','Seat','Skoda','Volvo','Land Rover','Jeep','Outros'] },
+    { id:'model', label:'Modelo', type:'text' },
+    { id:'year_from', label:'Ano (de)', type:'number' },
+    { id:'year_to', label:'Ano (ate)', type:'number' },
+    { id:'km_from', label:'KM (de)', type:'number' },
+    { id:'km_to', label:'KM (ate)', type:'number' },
+    { id:'fuel', label:'Combustivel', type:'select', options:['Gasolina','Diesel','Hibrido','Eletrico','GPL'] },
+    { id:'transmission', label:'Caixa', type:'select', options:['Manual','Automatica'] },
+    { id:'traction', label:'Tracao', type:'select', options:['Dianteira','Traseira','Integral'] },
+    { id:'doors', label:'Portas', type:'select', options:['2','3','4','5'] },
+    { id:'seats', label:'Lugares', type:'number' },
+    { id:'color', label:'Cor', type:'select', options:['Branco','Preto','Cinzento','Prata','Vermelho','Azul','Verde','Amarelo','Outra'] },
+    { id:'inspection', label:'Inspecao valida', type:'checkbox' },
+    { id:'imported', label:'Importado', type:'checkbox' },
+    { id:'single_owner', label:'Unico dono', type:'checkbox' },
+    { id:'accident_free', label:'Nao acidentado', type:'checkbox' },
+    { id:'trade_in', label:'Aceita retoma', type:'checkbox' }
+  ],
+  motorcycles: [
+    { id:'brand', label:'Marca', type:'select', options:['Honda','Yamaha','Suzuki','Kawasaki','BMW','Ducati','KTM','Harley-Davidson','Triumph','Royal Enfield','Aprilia','Husqvarna','Beta','Gas Gas','Sherco','TM Racing','Piaggio','Vespa','Kymco','SYM','Peugeot','Outros'] },
+    { id:'model', label:'Modelo', type:'text' },
+    { id:'year_from', label:'Ano (de)', type:'number' },
+    { id:'year_to', label:'Ano (ate)', type:'number' },
+    { id:'km_from', label:'KM (de)', type:'number' },
+    { id:'km_to', label:'KM (ate)', type:'number' },
+    { id:'engine_size', label:'Cilindrada (cc)', type:'number' },
+    { id:'fuel_type', label:'Combustivel', type:'select', options:['Gasolina','Eletrico'] },
+    { id:'bike_type', label:'Tipo', type:'select', options:['Desportiva','Turismo','Naked','Custom','Enduro','Trial','Scooter','Quatro rodas'] }
+  ],
+  realestate: [
+    { id:'property_type', label:'Tipo', type:'select', options:['Apartamento','Moradia','Terreno','Loja','Escritorio','Armazem'] },
+    { id:'deal_type', label:'Operacao', type:'select', options:['Venda','Arrendamento'] },
+    { id:'area_useful', label:'Area util (m2)', type:'number' },
+    { id:'area_total', label:'Area total (m2)', type:'number' },
+    { id:'bedrooms', label:'Quartos', type:'number' },
+    { id:'bathrooms', label:'Casas de banho', type:'number' },
+    { id:'garage', label:'Garagem', type:'checkbox' },
+    { id:'pool', label:'Piscina', type:'checkbox' },
+    { id:'garden', label:'Jardim', type:'checkbox' },
+    { id:'floor', label:'Andar', type:'number' },
+    { id:'elevator', label:'Elevador', type:'checkbox' },
+    { id:'furnished', label:'Mobilado', type:'checkbox' },
+    { id:'ac', label:'Ar condicionado', type:'checkbox' },
+    { id:'sea_view', label:'Vista mar', type:'checkbox' }
+  ],
+  phones: [
+    { id:'brand', label:'Marca', type:'select', options:['Apple','Samsung','Xiaomi','Huawei','OnePlus','Google','Nokia','Oppo','Vivo','Realme','Motorola','LG','Sony','HTC','Asus','Lenovo','ZTE','Alcatel','BlackBerry','Honor','Nothing','Outros'] },
+    { id:'model', label:'Modelo', type:'text' },
+    { id:'storage', label:'Armazenamento', type:'select', options:['32GB','64GB','128GB','256GB','512GB','1TB'] },
+    { id:'ram', label:'RAM (GB)', type:'number' },
+    { id:'battery_health', label:'Saude bateria (%)', type:'number' },
+    { id:'network_4g', label:'4G', type:'checkbox' },
+    { id:'network_5g', label:'5G', type:'checkbox' },
+    { id:'with_box', label:'Com caixa', type:'checkbox' },
+    { id:'with_charger', label:'Com carregador', type:'checkbox' },
+    { id:'warranty', label:'Garantia', type:'checkbox' }
+  ],
+  tablets: [
+    { id:'brand', label:'Marca', type:'select', options:['Apple','Samsung','Huawei','Lenovo','Microsoft','Xiaomi','Amazon','Asus','Acer','Toshiba','Sony','LG','Nokia','Alcatel','Outros'] },
+    { id:'model', label:'Modelo', type:'text' },
+    { id:'storage', label:'Armazenamento', type:'select', options:['32GB','64GB','128GB','256GB','512GB','1TB'] },
+    { id:'ram', label:'RAM (GB)', type:'number' },
+    { id:'screen_size', label:'Tamanho ecra', type:'select', options:['7-8 pol','9-10 pol','11-12 pol','13+ pol'] },
+    { id:'with_keyboard', label:'Com teclado', type:'checkbox' },
+    { id:'with_pen', label:'Com caneta', type:'checkbox' },
+    { id:'with_box', label:'Com caixa', type:'checkbox' },
+    { id:'warranty', label:'Garantia', type:'checkbox' }
+  ],
+  computers: [
+    { id:'brand', label:'Marca', type:'select', options:['Apple','Dell','HP','Lenovo','Asus','Acer','MSI','Microsoft','Samsung','Huawei','Toshiba','Sony','LG','Razer','Alienware','Gigabyte','Fujitsu','Outros'] },
+    { id:'type', label:'Tipo', type:'select', options:['Portatil','Desktop','All-in-One','Workstation','Servidor'] },
+    { id:'processor', label:'Processador', type:'text' },
+    { id:'ram', label:'RAM (GB)', type:'number' },
+    { id:'storage_type', label:'Tipo armazenamento', type:'select', options:['HDD','SSD','SSD+HDD'] },
+    { id:'storage_size', label:'Capacidade', type:'text' },
+    { id:'graphics', label:'Placa grafica', type:'text' },
+    { id:'screen_size', label:'Tamanho ecra', type:'select', options:['13-14 pol','15-16 pol','17+ pol','Sem ecra'] },
+    { id:'os', label:'Sistema operativo', type:'select', options:['Windows','macOS','Linux','Chrome OS','Sem SO'] },
+    { id:'with_box', label:'Com caixa', type:'checkbox' },
+    { id:'warranty', label:'Garantia', type:'checkbox' }
+  ],
+  jobs: [
+    { id:'job_area', label:'Area', type:'select', options:['Tecnologia','Vendas','Administracao','Saude','Educacao','Construcao','Restauracao','Transportes','Outra'] },
+    { id:'contract_type', label:'Contrato', type:'select', options:['Efetivo','Termo Certo','Estagio','Freelance','Part-time'] },
+    { id:'schedule', label:'Horario', type:'select', options:['Full-time','Part-time','Turnos','Flexivel'] },
+    { id:'remote', label:'Remoto', type:'select', options:['Presencial','Remoto','Hibrido'] },
+    { id:'salary_min', label:'Salario min. (CVE)', type:'number' },
+    { id:'salary_max', label:'Salario max. (CVE)', type:'number' },
+    { id:'education', label:'Escolaridade', type:'select', options:['Basico','Secundario','Tecnico','Licenciatura','Mestrado','Doutoramento'] }
+  ]
+};
+
+const LOCATIONS = {
+  "Praia":{lat:14.9315,lng:-23.5133},"Achada Santo Antonio":{lat:14.9400,lng:-23.5200},"Palmarejo":{lat:14.9350,lng:-23.5100},"Terra Branca":{lat:14.9280,lng:-23.5050},"Plateau":{lat:14.9177,lng:-23.5125},"Fazenda":{lat:14.9250,lng:-23.5200},"Achada Grande":{lat:14.9450,lng:-23.5300},"Vila Nova":{lat:14.9200,lng:-23.5050},"Ponta d'Agua":{lat:14.9500,lng:-23.5100},"Tira Chapeu":{lat:14.9150,lng:-23.5250},"Pensamento":{lat:14.9100,lng:-23.5150},"Assomada":{lat:15.1000,lng:-23.6833},"Tarrafal":{lat:15.2783,lng:-23.7500},"Pedra Badejo":{lat:15.1372,lng:-23.5294},"Calheta Sao Miguel":{lat:15.1167,lng:-23.6000},"Sao Domingos":{lat:15.0333,lng:-23.5667},"Cidade Velha":{lat:14.9167,lng:-23.6000},"Sao Lourenco dos Orgaos":{lat:15.0667,lng:-23.6167},"Achada Igreja":{lat:15.0833,lng:-23.6500},
+  "Mindelo":{lat:16.8833,lng:-24.9833},"Alto Miramar":{lat:16.8850,lng:-24.9750},"Alto Morabeza":{lat:16.8870,lng:-24.9780},"Alto Santo Antonio":{lat:16.8880,lng:-24.9800},"Alto Sao Nicolau":{lat:16.8860,lng:-24.9820},"Bela Vista":{lat:16.8840,lng:-24.9850},"Campinho":{lat:16.8820,lng:-24.9870},"Cha de Alecrim":{lat:16.8810,lng:-24.9890},"Fonte Conego":{lat:16.8830,lng:-24.9910},"Fortinho":{lat:16.8800,lng:-24.9930},"Lazareto":{lat:16.8700,lng:-24.9700},"Matiota":{lat:16.8890,lng:-24.9760},"Monte Sossego":{lat:16.8900,lng:-24.9740},"Ribeira Bote":{lat:16.8780,lng:-24.9950},"Ribeira de Craquinha":{lat:16.8770,lng:-24.9970},"Ribeira Juliao":{lat:16.8760,lng:-24.9990},"Ribeira da Vinha":{lat:16.8790,lng:-24.9940},"Zona Industrial":{lat:16.8750,lng:-25.0010},"Baia das Gatas":{lat:16.9100,lng:-24.9500},"Calhau":{lat:16.8500,lng:-24.9200},"Norte da Baia":{lat:16.9000,lng:-24.9600},"Salamansa":{lat:16.9200,lng:-24.9400},"Sao Pedro":{lat:16.8650,lng:-24.9900},"Lameirao":{lat:16.8600,lng:-24.9300},"Monte Verde":{lat:16.8950,lng:-24.9650},
+  "Santa Maria":{lat:16.6000,lng:-22.9000},"Centro":{lat:16.6050,lng:-22.9050},"Ponta Preta":{lat:16.6100,lng:-22.9100},"Tanquinho":{lat:16.5950,lng:-22.8950},"Vila Verde":{lat:16.6150,lng:-22.9150},"Murdeira":{lat:16.6667,lng:-22.9167},"Espargos":{lat:16.7667,lng:-22.9500},"Palmeira":{lat:16.7500,lng:-22.9833},"Pedra de Lume":{lat:16.8000,lng:-22.9167},"Serra Negra":{lat:16.7833,lng:-22.9333},
+  "Sal Rei":{lat:16.1667,lng:-22.9000},"Estoril":{lat:16.1700,lng:-22.9050},"Chaves":{lat:16.1750,lng:-22.8950},"Cabral":{lat:16.1600,lng:-22.9100},"Boa Esperanca":{lat:16.1550,lng:-22.8900},"Rabil":{lat:16.1333,lng:-22.8500},"Bofareira":{lat:16.1500,lng:-22.8333},"Fundo das Figueiras":{lat:16.1000,lng:-22.8667},"Povoacao Velha":{lat:16.0500,lng:-22.8000},"Joao Galego":{lat:16.1833,lng:-22.8167},
+  "Porto Novo":{lat:17.0167,lng:-25.0667},"Ribeira Grande":{lat:17.1500,lng:-25.0500},"Ponta do Sol":{lat:17.2000,lng:-25.0667},"Paul":{lat:17.1333,lng:-25.1167},"Janela":{lat:17.1667,lng:-25.1333},"Coculi":{lat:17.1167,lng:-25.1000},"Sinagoga":{lat:17.1000,lng:-25.0833},"Cha de Igreja":{lat:17.1500,lng:-25.1500},"Cruzinha":{lat:17.1833,lng:-25.1167},"Tarrafal de Monte Trigo":{lat:17.2167,lng:-25.1500},
+  "Ribeira Brava":{lat:16.6167,lng:-24.3000},"Tarrafal":{lat:16.5833,lng:-24.3167},"Juncalinho":{lat:16.6000,lng:-24.2833},"Preguica":{lat:16.5667,lng:-24.3333},"Estancia de Bras":{lat:16.6333,lng:-24.3167},"Queimadas":{lat:16.5500,lng:-24.3000},
+  "Sao Filipe":{lat:14.8833,lng:-24.3500},"Bila Baxo":{lat:14.8800,lng:-24.3450},"Cobom":{lat:14.8900,lng:-24.3600},"Cutelo":{lat:14.8750,lng:-24.3400},"Mosteiros":{lat:14.8167,lng:-24.3167},"Cova Figueira":{lat:14.8500,lng:-24.3000},"Patim":{lat:14.8667,lng:-24.3333},"Achada Furna":{lat:14.9000,lng:-24.3667},"Cha das Caldeiras":{lat:14.9500,lng:-24.3500},"Relva":{lat:14.8333,lng:-24.3500},
+  "Nova Sintra":{lat:14.8500,lng:-24.7000},"Furna":{lat:14.8333,lng:-24.6833},"Nossa Senhora do Monte":{lat:14.8667,lng:-24.7167},"Faja d'Agua":{lat:14.8167,lng:-24.6667},"Cachaco":{lat:14.8833,lng:-24.7333},
+  "Porto Ingles":{lat:15.2000,lng:-23.1833},"Calheta":{lat:15.1833,lng:-23.1667},"Barreiro":{lat:15.2167,lng:-23.2000},"Morro":{lat:15.1667,lng:-23.1500},"Morrinho":{lat:15.2333,lng:-23.2167},"Cascabulho":{lat:15.1500,lng:-23.1333},"Pedro Vaz":{lat:15.2500,lng:-23.2333},
+  "Santa Luzia":{lat:16.6500,lng:-24.6000}
+};
+
+function calculateDistance(lat1,lng1,lat2,lng2){
+  const R=6371;
+  const dLat=(lat2-lat1)*Math.PI/180;
+  const dLng=(lng2-lng1)*Math.PI/180;
+  const a=Math.sin(dLat/2)*Math.sin(dLat/2)+Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLng/2)*Math.sin(dLng/2);
+  return Math.round(R*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a)));
+}
+function getDistanceFromLocation(municipality){
+  if(!state.userLocation||!LOCATIONS[municipality])return null;
+  return calculateDistance(state.userLocation.lat,state.userLocation.lng,LOCATIONS[municipality].lat,LOCATIONS[municipality].lng);
+}
+
+let state = {
+  listings:[],
+  user:null,
+  favorites:JSON.parse(localStorage.getItem('cvm_favorites')||'[]'),
+  messages:JSON.parse(localStorage.getItem('cvm_messages')||'{}'),
+  filters:{island:'',municipality:'',category:'',condition:'',priceMin:null,priceMax:null,negotiable:false,sort:'latest',search:'',distance:null,dateFilter:'all',specific:{}},
+  userLocation:null,
+  isLoading:true
+};
+
+function save(){
+  localStorage.setItem('cvm_favorites',JSON.stringify(state.favorites));
+  localStorage.setItem('cvm_messages',JSON.stringify(state.messages));
+}
+function formatPrice(p){return new Intl.NumberFormat('pt-PT').format(p)+' CVE';}
+function timeAgo(ts){
+  const d=Math.floor((Date.now()-ts)/1000);
+  if(d<60)return d+'s';
+  if(d<3600)return Math.floor(d/60)+'m';
+  if(d<86400)return Math.floor(d/3600)+'h';
+  return Math.floor(d/86400)+'d';
+}
+
+window.addEventListener('online', () => {
+  document.getElementById('offlineBanner').classList.remove('show');
+  showToast('Ligacao restaurada!', 'success');
+  carregarDoSupabase();
+});
+
+window.addEventListener('offline', () => {
+  document.getElementById('offlineBanner').classList.add('show');
+  showToast('Estas offline', 'error');
+});
+
+function applyI18n(){
+  document.querySelectorAll('[data-i18n]').forEach(el=>el.textContent=t(el.dataset.i18n));
+  document.querySelectorAll('[data-i18n-placeholder]').forEach(el=>el.placeholder=t(el.dataset.i18nPlaceholder));
+  document.documentElement.lang=currentLang;
+}
+
+const CATEGORIES = [
+  {id:"cars",icon:"fa-car",color:"bg-blue-500"},
+  {id:"motorcycles",icon:"fa-motorcycle",color:"bg-red-500"},
+  {id:"realestate",icon:"fa-house",color:"bg-green-500"},
+  {id:"electronics",icon:"fa-tv",color:"bg-purple-500"},
+  {id:"phones",icon:"fa-mobile-screen",color:"bg-indigo-500"},
+  {id:"tablets",icon:"fa-tablet-screen-button",color:"bg-violet-500"},
+  {id:"computers",icon:"fa-laptop",color:"bg-cyan-500"},
+  {id:"home",icon:"fa-couch",color:"bg-orange-500"},
+  {id:"agriculture",icon:"fa-wheat-awn",color:"bg-yellow-600"},
+  {id:"livestock",icon:"fa-cow",color:"bg-amber-600"},
+  {id:"boats",icon:"fa-ship",color:"bg-blue-600"},
+  {id:"jobs",icon:"fa-briefcase",color:"bg-gray-600"},
+  {id:"services",icon:"fa-wrench",color:"bg-slate-600"},
+  {id:"fashion",icon:"fa-shirt",color:"bg-pink-500"},
+  {id:"kids_clothing",icon:"fa-child",color:"bg-rose-400"},
+  {id:"children",icon:"fa-baby",color:"bg-pink-400"},
+  {id:"sports",icon:"fa-futbol",color:"bg-emerald-500"},
+  {id:"tourism",icon:"fa-umbrella-beach",color:"bg-teal-500"},
+  {id:"business",icon:"fa-industry",color:"bg-zinc-600"},
+  {id:"kids",icon:"fa-shapes",color:"bg-rose-500"},
+  {id:"music",icon:"fa-guitar",color:"bg-violet-500"},
+  {id:"other",icon:"fa-box",color:"bg-gray-500"}
+];
+
+function renderCategories(){
+  const grid=document.getElementById('categoriesGrid');
+  grid.innerHTML=CATEGORIES.map(c=>{
+    const isActive = state.filters.category === c.id;
+    return `
+    <button onclick="filterByCategory('${c.id}')" class="cat-card ${isActive?'active':''} flex flex-col items-center gap-2 p-4 rounded-2xl bg-white dark:bg-ocean-800 border border-sand-200 dark:border-ocean-700">
+      <div class="cat-icon w-12 h-12 rounded-xl ${c.color} flex items-center justify-center text-white shadow-sm">
+        <i class="fas ${c.icon} text-xl"></i>
+      </div>
+      <div class="cat-name text-xs font-semibold text-center text-ocean-700 dark:text-sand-200">${t('cat_'+c.id)}</div>
+    </button>
+  `}).join('');
+}
+
+const ISLANDS = {
+  santiago:{name:{pt:"Santiago",en:"Santiago"},municipalities:["Praia","Achada Santo Antonio","Palmarejo","Terra Branca","Plateau","Fazenda","Achada Grande","Vila Nova","Ponta d'Agua","Tira Chapeu","Pensamento","Assomada","Tarrafal","Pedra Badejo","Calheta Sao Miguel","Sao Domingos","Cidade Velha","Sao Lourenco dos Orgaos","Achada Igreja"]},
+  saovicente:{name:{pt:"Sao Vicente",en:"Sao Vicente"},municipalities:["Mindelo","Alto Miramar","Alto Morabeza","Alto Santo Antonio","Alto Sao Nicolau","Bela Vista","Campinho","Cha de Alecrim","Fonte Conego","Fortinho","Lazareto","Matiota","Monte Sossego","Ribeira Bote","Ribeira de Craquinha","Ribeira Juliao","Ribeira da Vinha","Zona Industrial","Baia das Gatas","Calhau","Norte da Baia","Salamansa","Sao Pedro","Lameirao","Monte Verde"]},
+  sal:{name:{pt:"Sal",en:"Sal"},municipalities:["Santa Maria","Centro","Ponta Preta","Tanquinho","Vila Verde","Murdeira","Espargos","Palmeira","Pedra de Lume","Serra Negra"]},
+  boavista:{name:{pt:"Boa Vista",en:"Boa Vista"},municipalities:["Sal Rei","Estoril","Chaves","Cabral","Boa Esperanca","Rabil","Bofareira","Fundo das Figueiras","Povoacao Velha","Joao Galego"]},
+  santoantao:{name:{pt:"Santo Antao",en:"Santo Antao"},municipalities:["Porto Novo","Ribeira Grande","Ponta do Sol","Paul","Janela","Coculi","Sinagoga","Cha de Igreja","Cruzinha","Tarrafal de Monte Trigo"]},
+  saonicolau:{name:{pt:"Sao Nicolau",en:"Sao Nicolau"},municipalities:["Ribeira Brava","Tarrafal","Juncalinho","Preguica","Estancia de Bras","Queimadas"]},
+  fogo:{name:{pt:"Fogo",en:"Fogo"},municipalities:["Sao Filipe","Centro","Bila Baxo","Cobom","Cutelo","Mosteiros","Cova Figueira","Patim","Achada Furna","Cha das Caldeiras","Relva"]},
+  brava:{name:{pt:"Brava",en:"Brava"},municipalities:["Nova Sintra","Furna","Nossa Senhora do Monte","Faja d'Agua","Cachaco"]},
+  maio:{name:{pt:"Maio",en:"Maio"},municipalities:["Porto Ingles","Calheta","Barreiro","Morro","Morrinho","Cascabulho","Pedro Vaz"]},
+  santaluzia:{name:{pt:"Santa Luzia",en:"Santa Luzia"},municipalities:["Santa Luzia"]}
+};
+
+function renderIslandOptions(){
+  const sel=document.getElementById('filterIsland');
+  sel.innerHTML=`<option value="">${t('allIslands')}</option>`+Object.entries(ISLANDS).map(([k,v])=>`<option value="${k}">${v.name[currentLang]||v.name.pt}</option>`).join('');
+}
+
+function renderMunicipalityOptions(island){
+  const sel=document.getElementById('filterMunicipality');
+  sel.innerHTML=`<option value="">${t('allMunicipalities')}</option>`;
+  if(island&&ISLANDS[island])sel.innerHTML+=ISLANDS[island].municipalities.map(m=>`<option value="${m}">${m}</option>`).join('');
+}
+
+function renderCategoryOptions(){
+  const sel=document.getElementById('filterCategory');
+  sel.innerHTML=`<option value="">${t('allCategories')}</option>`+CATEGORIES.map(c=>`<option value="${c.id}">${t('cat_'+c.id)}</option>`).join('');
+}
+
+function renderSpecificFilters(){
+  const category = state.filters.category;
+  const container = document.getElementById('specificFiltersContainer');
+  const filtersDiv = document.getElementById('specificFilters');
+  const titleSpan = document.getElementById('specificFiltersTitle');
+  
+  if(!category || !CATEGORY_FILTERS[category]){
+    container.classList.add('hidden');
+    return;
+  }
+  
+  container.classList.remove('hidden');
+  titleSpan.textContent = t('cat_'+category);
+  
+  filtersDiv.innerHTML = CATEGORY_FILTERS[category].map(f => {
+    if(f.type === 'select'){
+      return `<div><label class="block text-xs font-medium text-ocean-500 dark:text-sand-200 mb-1">${f.label}</label><select id="sf_${f.id}" class="input-cv w-full px-3 py-2 rounded-lg border border-sand-200 dark:border-ocean-700 bg-sand-50 dark:bg-ocean-900 text-sm cursor-pointer"><option value="">Todos</option>${f.options.map(o=>`<option value="${o}">${o}</option>`).join('')}</select></div>`;
+    } else if(f.type === 'checkbox'){
+      return `<div class="flex items-end"><label class="filter-chip flex items-center gap-2 px-4 py-2 rounded-full border border-sand-200 dark:border-ocean-700 bg-sand-50 dark:bg-ocean-900 text-sm font-medium cursor-pointer w-full"><input type="checkbox" id="sf_${f.id}" class="rounded text-ocean-500">${f.label}</label></div>`;
+    } else {
+      return `<div><label class="block text-xs font-medium text-ocean-500 dark:text-sand-200 mb-1">${f.label}</label><input type="${f.type}" id="sf_${f.id}" class="input-cv w-full px-3 py-2 rounded-lg border border-sand-200 dark:border-ocean-700 bg-sand-50 dark:bg-ocean-900 text-sm"></div>`;
+    }
+  }).join('');
+}
+
+function renderSkeleton() {
+  const grid = document.getElementById('listingsGrid');
+  grid.innerHTML = Array(8).fill('').map(() => `
+    <div class="bg-white dark:bg-ocean-800 rounded-2xl overflow-hidden border border-sand-200 dark:border-ocean-700">
+      <div class="skeleton aspect-[4/3]"></div>
+      <div class="p-4 space-y-3">
+        <div class="skeleton h-6 w-24 rounded"></div>
+        <div class="skeleton h-4 w-full rounded"></div>
+        <div class="skeleton h-3 w-32 rounded"></div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function renderListings(){
+  let list=[...state.listings];
+  const f=state.filters;
+
+  if(state.userLocation)list=list.map(l=>({...l,distance:getDistanceFromLocation(l.municipality||l.local)}));
+
+  if(f.search){const q=f.search.toLowerCase();list=list.filter(l=>l.title.toLowerCase().includes(q)||(l.description||'').toLowerCase().includes(q));}
+  if(f.island)list=list.filter(l=>l.island===f.island);
+  if(f.municipality)list=list.filter(l=>l.municipality===f.municipality);
+  if(f.category)list=list.filter(l=>l.category===f.category);
+  if(f.condition)list=list.filter(l=>l.condition===f.condition);
+  if(f.priceMin!=null)list=list.filter(l=>l.price>=f.priceMin);
+  if(f.priceMax!=null)list=list.filter(l=>l.price<=f.priceMax);
+  if(f.negotiable)list=list.filter(l=>l.negotiable);
+  if(f.distance&&state.userLocation)list=list.filter(l=>l.distance!==null&&l.distance<=parseInt(f.distance));
+  
+  if(f.dateFilter && f.dateFilter !== 'all'){
+    const now = Date.now();
+    const day = 86400000;
+    let cutoff;
+    if(f.dateFilter === 'today') cutoff = now - day;
+    else if(f.dateFilter === '3days') cutoff = now - 3*day;
+    else if(f.dateFilter === 'week') cutoff = now - 7*day;
+    else if(f.dateFilter === 'month') cutoff = now - 30*day;
+    if(cutoff) list = list.filter(l => l.createdAt >= cutoff);
+  }
+
+  if(f.category && CATEGORY_FILTERS[f.category] && Object.keys(f.specific).length > 0){
+    list = list.filter(l => {
+      try {
+        const detalhes = l.detalhes ? (typeof l.detalhes === 'string' ? JSON.parse(l.detalhes) : l.detalhes) : {};
+        for(const [key, value] of Object.entries(f.specific)){
+          if(value === '' || value === null || value === undefined) continue;
+          if(typeof value === 'boolean'){
+            if(detalhes[key] !== value) return false;
+          } else {
+            if(String(detalhes[key]).toLowerCase() !== String(value).toLowerCase()) return false;
+          }
+        }
+        return true;
+      } catch(e){ return false; }
+    });
+  }
+
+  if(f.sort==='latest')list.sort((a,b)=>b.createdAt-a.createdAt);
+  else if(f.sort==='oldest')list.sort((a,b)=>a.createdAt-b.createdAt);
+  else if(f.sort==='price_asc')list.sort((a,b)=>a.price-b.price);
+  else if(f.sort==='price_desc')list.sort((a,b)=>b.price-a.price);
+  else if(f.sort==='views')list.sort((a,b)=>(b.views||0)-(a.views||0));
+  else if(f.sort==='distance'&&state.userLocation)list.sort((a,b)=>{if(a.distance===null)return 1;if(b.distance===null)return -1;return a.distance-b.distance;});
+
+  document.getElementById('listingCount').textContent=list.length;
+  document.getElementById('totalListings').textContent=state.listings.length;
+  const grid=document.getElementById('listingsGrid');
+  const noRes=document.getElementById('noResults');
+
+  if(!list.length){grid.innerHTML='';noRes.classList.remove('hidden');return;}
+  noRes.classList.add('hidden');
+
+  const placeholderImg = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="400" height="300"%3E%3Crect width="400" height="300" fill="%23f0e6d2"/%3E%3Ctext x="50%25" y="50%25" font-size="48" fill="%230f4c75" text-anchor="middle" dy=".3em"%3E%3C/svg%3E';
+
+  grid.innerHTML=list.map(l=>{
+    const isFav=state.favorites.includes(l.id);
+    const cat=CATEGORIES.find(c=>c.id===l.category);
+    const distanceText=l.distance!==null?`<span class="inline-flex items-center gap-1 text-xs font-medium text-ocean-500 bg-ocean-50 dark:bg-ocean-700 px-2 py-1 rounded-full"><i class="fas fa-location-dot"></i>${l.distance} ${t('km')}</span>`:'';
+    
+    const images = l.imagens && Array.isArray(l.imagens) ? l.imagens : (l.img ? [l.img] : []);
+    const mainImage = images[0] || null;
+    const hasImage = !!mainImage;
+
+    return `
+    <div onclick="openListing(${l.id})" class="listing-card group bg-white dark:bg-ocean-800 rounded-2xl overflow-hidden border border-sand-200 dark:border-ocean-700 cursor-pointer fade-in">
+      <div class="relative aspect-[4/3] bg-sand-100 dark:bg-ocean-900 overflow-hidden">
+        ${hasImage 
+          ? `<img src="${mainImage}" alt="${l.title}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" onerror="this.onerror=null; this.src='${placeholderImg}';">`
+          : `<div class="w-full h-full img-placeholder"><i class="fas fa-image text-4xl text-ocean-500"></i></div>`
+        }
+        ${l.featured?'<span class="absolute top-3 left-3 badge-premium text-white text-xs font-bold px-3 py-1.5 rounded-full">PREMIUM</span>':''}
+        ${images.length > 1 ? `<span class="absolute bottom-3 right-3 bg-ocean-800/80 backdrop-blur text-white text-xs px-2 py-1 rounded-full flex items-center gap-1"><i class="fas fa-images"></i> ${images.length}</span>` : ''}
+        <button onclick="event.stopPropagation();toggleFavorite(${l.id})" class="absolute top-3 right-3 w-9 h-9 rounded-full bg-white/90 dark:bg-ocean-800/90 backdrop-blur shadow-md flex items-center justify-center hover:scale-110 transition-transform">
+          <i class="fas fa-heart ${isFav?'text-sun-500 fill-sun-500':'text-ocean-500'} text-sm"></i>
+        </button>
+        ${l.negotiable?'<span class="absolute bottom-3 left-3 bg-green-500 text-white text-xs font-semibold px-3 py-1 rounded-full">Negociavel</span>':''}
+      </div>
+      <div class="p-4">
+        <div class="flex items-start justify-between gap-2 mb-2">
+          <div class="text-xl font-bold price-text">${formatPrice(l.price)}</div>
+          ${distanceText}
+        </div>
+        <h3 class="font-semibold text-ocean-800 dark:text-sand-100 mb-2 line-clamp-2 text-sm leading-snug">${l.title}</h3>
+        <div class="flex items-center justify-between text-xs text-ocean-500 dark:text-sand-200">
+          <span class="flex items-center gap-1"><i class="fas fa-location-dot text-sun-500"></i>${l.municipality||l.local}</span>
+          <span class="flex items-center gap-1"><i class="far fa-clock"></i>${timeAgo(l.createdAt)}</span>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function renderAuthButton(){
+  const btn=document.getElementById('authBtn');
+  if(state.user){
+    btn.innerHTML=`<div class="flex items-center gap-2"><div class="w-7 h-7 rounded-full bg-sun-400 flex items-center justify-center text-ocean-900 font-bold text-sm">${state.user.name[0].toUpperCase()}</div><span class="hidden lg:inline">${state.user.name.split(' ')[0]}</span></div>`;
+    btn.onclick=openUserMenu;
+  } else { 
+    btn.textContent='Entrar'; 
+    btn.onclick=() => openAuth('login'); 
+  }
+  const fc=document.getElementById('favCount');
+  if(state.favorites.length){fc.textContent=state.favorites.length;fc.classList.remove('hidden');}else{fc.classList.add('hidden');}
+}
+
+function toggleTheme(){document.documentElement.classList.toggle('dark');localStorage.setItem('theme',document.documentElement.classList.contains('dark')?'dark':'light');}
+function setLang(lang){currentLang=lang;localStorage.setItem('lang',lang);applyI18n();renderCategories();renderIslandOptions();renderCategoryOptions();renderListings();renderAuthButton();}
+function goHome(){clearFilters();window.scrollTo({top:0,behavior:'smooth'});}
+
+function filterByCategory(id){
+  if(state.filters.category===id){ state.filters.category=''; }
+  else { state.filters.category=id; }
+  document.getElementById('filterCategory').value=state.filters.category;
+  renderSpecificFilters();
+  renderCategories();
+  renderListings();
+  document.getElementById('listingsGrid').scrollIntoView({behavior:'smooth'});
+}
+
+function setDateFilter(value, e){
+  state.filters.dateFilter = value;
+  document.querySelectorAll('#dateFilters .filter-chip').forEach(btn => btn.classList.remove('active'));
+  e.target.classList.add('active');
+}
+
+function setConditionFilter(value, e){
+  state.filters.condition = value;
+  document.querySelectorAll('#conditionFilters .filter-chip').forEach(btn => btn.classList.remove('active'));
+  e.target.classList.add('active');
+}
+
+function getLocationAndFilter(){
+  if(!navigator.geolocation){showToast('Geolocalizacao nao suportada','error');return;}
+  const locDiv=document.getElementById('userLocation');
+  locDiv.querySelector('span').textContent='A obter localizacao...';
+  locDiv.classList.remove('hidden');
+  navigator.geolocation.getCurrentPosition(
+    (position)=>{
+      state.userLocation={lat:position.coords.latitude,lng:position.coords.longitude};
+      locDiv.querySelector('span').textContent=`${state.userLocation.lat.toFixed(4)}, ${state.userLocation.lng.toFixed(4)}`;
+      renderListings();
+      showToast('Localizacao atualizada!','success');
+    },
+    (error)=>{locDiv.querySelector('span').textContent='Erro ao obter localizacao';showToast('Erro ao obter localizacao','error');}
+  );
+}
+
+function applyFilters(){
+  state.filters.island=document.getElementById('filterIsland').value;
+  state.filters.municipality=document.getElementById('filterMunicipality').value;
+  state.filters.category=document.getElementById('filterCategory').value;
+  state.filters.distance=document.getElementById('filterDistance').value;
+  state.filters.sort=document.getElementById('filterSort').value;
+  state.filters.priceMin=parseFloat(document.getElementById('filterPriceMin').value)||null;
+  state.filters.priceMax=parseFloat(document.getElementById('filterPriceMax').value)||null;
+  state.filters.negotiable=document.getElementById('filterNegotiable').checked;
+  
+  const category = state.filters.category;
+  state.filters.specific = {};
+  if(category && CATEGORY_FILTERS[category]){
+    CATEGORY_FILTERS[category].forEach(f => {
+      const el = document.getElementById('sf_'+f.id);
+      if(el){
+        if(f.type === 'checkbox') state.filters.specific[f.id] = el.checked;
+        else if(el.value) state.filters.specific[f.id] = el.value;
+      }
+    });
+  }
+  
+  renderCategories();
+  renderListings();
+  showToast('Filtros aplicados','success');
+}
+
+function clearFilters(){
+  state.filters={island:'',municipality:'',category:'',condition:'',priceMin:null,priceMax:null,negotiable:false,sort:'latest',search:'',distance:null,dateFilter:'all',specific:{}};
+  state.userLocation=null;
+  document.getElementById('filterIsland').value='';
+  document.getElementById('filterMunicipality').value='';
+  document.getElementById('filterCategory').value='';
+  document.getElementById('filterDistance').value='';
+  document.getElementById('filterSort').value='latest';
+  document.getElementById('filterPriceMin').value='';
+  document.getElementById('filterPriceMax').value='';
+  document.getElementById('filterNegotiable').checked=false;
+  document.getElementById('searchInput').value='';
+  document.getElementById('userLocation').classList.add('hidden');
+  document.querySelectorAll('#dateFilters .filter-chip, #conditionFilters .filter-chip').forEach((btn,i) => {
+    btn.classList.remove('active');
+    if(i===0 || (i===6 && btn.closest('#conditionFilters'))) btn.classList.add('active');
+  });
+  renderSpecificFilters();
+  renderCategories();
+  renderListings();
+}
+
+function toggleFavorite(id){
+  if(!state.user){showToast(t('loginRequired'),'error');openAuth('login');return;}
+  const i=state.favorites.indexOf(id);
+  if(i>=0){state.favorites.splice(i,1);showToast('Removido dos favoritos','success');}
+  else{state.favorites.push(id);showToast('Adicionado aos favoritos','success');}
+  save();renderListings();renderAuthButton();
+}
+
+function openFavorites(){
+  if(!state.user){showToast(t('loginRequired'),'error');openAuth('login');return;}
+  const favs=state.listings.filter(l=>state.favorites.includes(l.id));
+  showModal(`
+    <div class="flex items-center justify-between mb-6"><h2 class="font-display text-2xl font-bold"><i class="fas fa-heart text-sun-500 mr-2"></i>${t('favorites')} (${favs.length})</h2></div>
+    <div class="grid grid-cols-2 gap-4 max-h-[60vh] overflow-y-auto pr-2">
+      ${favs.length?favs.map(l=>{
+        const images = l.imagens && Array.isArray(l.imagens) ? l.imagens : (l.img ? [l.img] : []);
+        const hasImage = images.length > 0;
+        return `<div onclick="closeModal();openListing(${l.id})" class="listing-card bg-sand-50 dark:bg-ocean-700 rounded-xl overflow-hidden cursor-pointer border border-sand-200 dark:border-ocean-600">
+          ${hasImage ? `<img src="${images[0]}" class="w-full aspect-square object-cover">` : `<div class="w-full aspect-square img-placeholder"><i class="fas fa-image text-3xl text-ocean-500"></i></div>`}
+          <div class="p-3"><div class="font-bold price-text text-sm">${formatPrice(l.price)}</div><div class="text-xs line-clamp-2 mt-1">${l.title}</div></div>
+        </div>`;
+      }).join(''):`<div class="col-span-2 text-center py-12 text-ocean-500"><i class="fas fa-heart text-4xl mb-3"></i><p>${t('noResults')}</p></div>`}
+    </div>
+  `);
+}
+
+function openListing(id){
+  const l=state.listings.find(x=>x.id===id);
+  if(!l)return;
+  l.views=(l.views||0)+1;
+  save();
+  const cat=CATEGORIES.find(c=>c.id===l.category);
+  const isFav=state.favorites.includes(l.id);
+  const distance=getDistanceFromLocation(l.municipality||l.local);
+  const distanceText=distance!==null?`<span class="inline-flex items-center gap-2 text-sm font-medium text-ocean-500 bg-ocean-50 dark:bg-ocean-700 px-4 py-2 rounded-full"><i class="fas fa-location-dot"></i>${distance} ${t('km')} de distancia</span>`:'';
+  
+  const images = l.imagens && Array.isArray(l.imagens) ? l.imagens : (l.img ? [l.img] : []);
+  const mainImage = images[0] || null;
+  const hasImages = images.length > 0;
+  const whatsappLink=`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(`Ola! Venho do CV Mercado e tenho interesse no anuncio: ${l.title} (${formatPrice(l.price)}). Ainda esta disponivel?`)}`;
+
+  const detalhes = l.detalhes ? (typeof l.detalhes === 'string' ? JSON.parse(l.detalhes) : l.detalhes) : {};
+  const specificFilters = CATEGORY_FILTERS[l.category] || [];
+  const detalhesHtml = specificFilters.length > 0 ? `
+    <div class="mb-6">
+      <h3 class="font-display font-bold text-lg mb-3">Detalhes</h3>
+      <div class="grid grid-cols-2 gap-2">
+        ${specificFilters.filter(f => detalhes[f.id] !== undefined && detalhes[f.id] !== '' && detalhes[f.id] !== false).map(f => `
+          <div class="flex items-center gap-2 px-3 py-2 bg-sand-50 dark:bg-ocean-700 rounded-lg">
+            <span class="text-xs text-ocean-500">${f.label.replace(/^[^\s]+\s/,'')}</span>
+            <span class="text-sm font-semibold ml-auto">${typeof detalhes[f.id] === 'boolean' ? (detalhes[f.id] ? 'Sim' : 'Nao') : detalhes[f.id]}</span>
+          </div>
+        `).join('')}
+      </div>
+    </div>
+  ` : '';
+
+  const placeholderImg = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="400" height="400"%3E%3Crect width="400" height="400" fill="%23f0e6d2"/%3E%3Ctext x="50%25" y="50%25" font-size="64" fill="%230f4c75" text-anchor="middle" dy=".3em"%3E%3C/svg%3E';
+
+  const galleryHtml = hasImages ? `
+    <div class="space-y-3">
+      <div class="aspect-square bg-sand-100 dark:bg-ocean-900 rounded-2xl overflow-hidden shadow-medium cursor-pointer" onclick="openLightbox(${l.id}, 0)">
+        <img id="mainDetailImg" src="${mainImage}" class="w-full h-full object-cover" onerror="this.onerror=null; this.src='${placeholderImg}';">
+      </div>
+      ${images.length > 1 ? `
+        <div class="grid grid-cols-4 gap-2">
+          ${images.map((img, idx) => `
+            <div class="aspect-square rounded-lg overflow-hidden cursor-pointer border-2 ${idx === 0 ? 'border-sun-400' : 'border-transparent'} hover:border-sun-400 transition-colors" onclick="changeMainImage('${img}', this)">
+              <img src="${img}" class="w-full h-full object-cover" onerror="this.onerror=null; this.src='${placeholderImg}';">
+            </div>
+          `).join('')}
+        </div>
+      ` : ''}
+    </div>
+  ` : `<div class="aspect-square bg-sand-100 dark:bg-ocean-900 rounded-2xl overflow-hidden shadow-medium"><div class="w-full h-full img-placeholder"><i class="fas fa-image text-6xl text-ocean-500"></i></div></div>`;
+
+  showModal(`
+    <div class="grid lg:grid-cols-2 gap-8">
+      <div>${galleryHtml}</div>
+      <div>
+        ${l.featured?'<span class="inline-block badge-premium text-white text-xs font-bold px-3 py-1.5 rounded-full mb-3">PREMIUM</span>':''}
+        <h1 class="font-display text-3xl font-bold mb-3">${l.title}</h1>
+        <div class="flex items-center gap-3 mb-6">
+          <div class="text-4xl font-bold price-text">${formatPrice(l.price)}</div>
+          ${l.negotiable?'<span class="inline-flex items-center text-sm font-semibold text-green-600 bg-green-50 dark:bg-green-900/30 px-3 py-1.5 rounded-full"><i class="fas fa-tags mr-1.5"></i>Negociavel</span>':''}
+        </div>
+        <div class="flex flex-wrap gap-2 mb-6">
+          <span class="inline-flex items-center gap-2 px-4 py-2 bg-sand-100 dark:bg-ocean-700 rounded-full text-sm font-medium"><i class="fas ${cat?cat.icon:'fa-box'} ${cat?cat.color:'text-ocean-500'}"></i>${t('cat_'+(l.category||'other'))}</span>
+          <span class="inline-flex items-center gap-2 px-4 py-2 bg-sand-100 dark:bg-ocean-700 rounded-full text-sm font-medium"><i class="fas fa-location-dot text-sun-500"></i>${l.municipality||l.local}, ${ISLANDS[l.island]?ISLANDS[l.island].name[currentLang]||ISLANDS[l.island].name.pt:l.island}</span>
+          ${distanceText}
+        </div>
+        <div class="flex items-center gap-4 text-sm text-ocean-500 mb-6 pb-6 border-b border-sand-200 dark:border-ocean-700">
+          <span class="flex items-center gap-2"><i class="far fa-eye"></i>${l.views||0} ${t('views')}</span>
+          <span class="flex items-center gap-2"><i class="far fa-clock"></i>${t('since')} ${timeAgo(l.createdAt)}</span>
+          ${images.length > 0 ? `<span class="flex items-center gap-2"><i class="fas fa-images"></i>${images.length} fotos</span>` : ''}
+        </div>
+        <div class="mb-6"><h3 class="font-display font-bold text-lg mb-3">Descricao</h3><p class="text-ocean-700 dark:text-sand-200 leading-relaxed">${l.description||'Sem descricao.'}</p></div>
+        ${detalhesHtml}
+        <div class="bg-sand-50 dark:bg-ocean-700 rounded-2xl p-5 mb-6">
+          <div class="flex items-center gap-4">
+            <div class="w-14 h-14 rounded-full bg-ocean-500 flex items-center justify-center text-sun-400 font-bold text-2xl shadow-lg">${(l.seller?l.seller.name:'Vendedor CV').charAt(0)}</div>
+            <div class="flex-1"><div class="font-bold text-lg">${l.seller?l.seller.name:'Vendedor CV'} ${l.seller&&l.seller.verified?'<i class="fas fa-check-circle text-ocean-500 ml-1"></i>':''}</div><div class="text-sm text-ocean-500 flex items-center gap-1"><i class="fas fa-star text-sun-400"></i>${l.seller?l.seller.rating:'5.0'}</div></div>
+          </div>
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <a href="${whatsappLink}" target="_blank" rel="noopener noreferrer" class="btn-primary px-6 py-3.5 rounded-full font-semibold flex items-center justify-center gap-2 text-center"><i class="fab fa-whatsapp text-xl"></i>WhatsApp</a>
+          <button onclick="shareListing(${l.id})" class="px-6 py-3.5 rounded-full border-2 border-green-500 text-green-600 hover:bg-green-50 dark:hover:bg-green-900/20 font-semibold flex items-center justify-center gap-2 transition-all"><i class="fas fa-share-alt"></i>Partilhar</button>
+          <button onclick="toggleFavorite(${l.id});closeModal();openListing(${l.id})" class="px-6 py-3.5 rounded-full border-2 border-sand-200 dark:border-ocean-700 hover:bg-sand-100 dark:hover:bg-ocean-700 font-semibold flex items-center justify-center gap-2 transition-all"><i class="fas fa-heart ${isFav?'text-sun-500 fill-sun-500':'text-ocean-500'}"></i>${isFav?'Remover favorito':'Favorito'}</button>
+          <button onclick="reportItem(${l.id},'listing')" class="px-6 py-3.5 rounded-full border-2 border-red-300 dark:border-red-800 text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 font-semibold flex items-center justify-center gap-2 transition-all"><i class="fas fa-flag"></i>Reportar</button>
+        </div>
+      </div>
+    </div>
+  `,'max-w-5xl');
+}
+
+function changeMainImage(newSrc, thumbnail) {
+  const mainImg = document.getElementById('mainDetailImg');
+  if(mainImg) mainImg.src = newSrc;
+  const thumbs = thumbnail.parentElement.querySelectorAll('div');
+  thumbs.forEach(t => { t.classList.remove('border-sun-400'); t.classList.add('border-transparent'); });
+  thumbnail.classList.remove('border-transparent');
+  thumbnail.classList.add('border-sun-400');
+}
+
+window.openLightbox = function(listingId, startIndex) {
+  const l = state.listings.find(x => x.id === listingId);
+  if(!l) return;
+  const images = l.imagens && Array.isArray(l.imagens) ? l.imagens : (l.img ? [l.img] : []);
+  let currentIndex = startIndex;
+  
+  const render = () => {
+    document.getElementById('modalRoot').innerHTML = `
+      <div class="fixed inset-0 z-50 bg-ocean-900/95 flex items-center justify-center p-4 fade-in" onclick="if(event.target===this)closeModal()">
+        <button onclick="closeModal()" class="absolute top-4 right-4 w-12 h-12 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-colors"><i class="fas fa-times text-xl"></i></button>
+        ${images.length > 1 ? `
+          <button onclick="window.navLightbox(-1)" class="absolute left-4 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-colors"><i class="fas fa-chevron-left text-xl"></i></button>
+          <button onclick="window.navLightbox(1)" class="absolute right-4 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-colors"><i class="fas fa-chevron-right text-xl"></i></button>
+        ` : ''}
+        <div class="max-w-5xl w-full max-h-[90vh] flex items-center justify-center">
+          <img src="${images[currentIndex]}" class="max-w-full max-h-[85vh] object-contain rounded-lg" alt="${l.title}">
+        </div>
+        <div class="absolute bottom-4 left-1/2 -translate-x-1/2 bg-white/10 backdrop-blur px-4 py-2 rounded-full text-white text-sm">${currentIndex + 1} / ${images.length}</div>
+      </div>
+    `;
+  };
+  
+  window.navLightbox = (dir) => {
+    currentIndex += dir;
+    if(currentIndex < 0) currentIndex = images.length - 1;
+    if(currentIndex >= images.length) currentIndex = 0;
+    render();
+  };
+  render();
+  
+  document.addEventListener('keydown', function handleKey(e) {
+    if(e.key === 'Escape') { closeModal(); document.removeEventListener('keydown', handleKey); }
+    if(e.key === 'ArrowLeft') window.navLightbox(-1);
+    if(e.key === 'ArrowRight') window.navLightbox(1);
+  });
+};
+
+function contactSeller(id){if(!state.user){showToast(t('loginRequired'),'error');openAuth('login');return;}const l=state.listings.find(x=>x.id===id);closeModal();openChat(l.seller?l.seller.name:'Vendedor CV',id);}
+function shareListing(id){const l=state.listings.find(x=>x.id===id);const text=`${l.title} - ${formatPrice(l.price)} - CV Mercado`;if(navigator.share)navigator.share({title:l.title,text,url:location.href});else window.open(`https://wa.me/?text=${encodeURIComponent(text+' '+location.href)}`,'_blank');}
+function reportItem(id,type){if(!state.user){showToast(t('loginRequired'),'error');openAuth('login');return;}if(confirm('Confirmar denuncia?')){showToast('Denuncia enviada','success');closeModal();}}
+
+window._tempImages = [];
+window.pendingAction = null;
+
+function openCreateListing(editId=null){
+  if(!state.user){
+    window.pendingAction = 'publish';
+    showToast('Inicie sessao para publicar','info');
+    setTimeout(() => openAuth('login'), 500);
+    return;
+  }
+  const l=editId?state.listings.find(x=>x.id===editId):null;
+  const existingImages = l && l.imagens ? l.imagens : (l && l.img ? [l.img] : []);
+  window._tempImages = [...existingImages];
+  
+  showModal(`
+    <div class="flex items-center justify-between mb-6"><h2 class="font-display text-2xl font-bold"><i class="fas fa-plus-circle text-sun-500 mr-2"></i>${l?t('edit'):t('publish')}</h2></div>
+    <form id="listingForm" class="space-y-5" onsubmit="window.handlePublish(event)">
+      <div><label class="block text-sm font-semibold mb-2">${t('title')} <span class="text-red-500">*</span></label><input name="title" required value="${l?l.title:''}" placeholder="Ex: iPhone 13 Pro Max 256GB" class="input-cv w-full px-4 py-3 rounded-xl border border-sand-200 dark:border-ocean-700 bg-sand-50 dark:bg-ocean-900 focus:outline-none"></div>
+      <div class="grid grid-cols-2 gap-4">
+        <div><label class="block text-sm font-semibold mb-2">${t('category')} <span class="text-red-500">*</span></label><select name="category" id="createCategory" required onchange="renderCreateSpecificFields(this.value)" class="input-cv w-full px-4 py-3 rounded-xl border border-sand-200 dark:border-ocean-700 bg-sand-50 dark:bg-ocean-900 focus:outline-none cursor-pointer">${CATEGORIES.map(c=>`<option value="${c.id}" ${l&&l.category===c.id?'selected':''}>${t('cat_'+c.id)}</option>`).join('')}</select></div>
+        <div><label class="block text-sm font-semibold mb-2">${t('priceCVE')} <span class="text-red-500">*</span></label><input name="price" type="number" required value="${l?l.price:''}" placeholder="0" class="input-cv w-full px-4 py-3 rounded-xl border border-sand-200 dark:border-ocean-700 bg-sand-50 dark:bg-ocean-900 focus:outline-none"></div>
+      </div>
+      <div class="grid grid-cols-2 gap-4">
+        <div><label class="block text-sm font-semibold mb-2">${t('island')} <span class="text-red-500">*</span></label><select name="island" required onchange="updateCreateMunicipalities(this.value)" class="input-cv w-full px-4 py-3 rounded-xl border border-sand-200 dark:border-ocean-700 bg-sand-50 dark:bg-ocean-900 focus:outline-none cursor-pointer">${Object.entries(ISLANDS).map(([k,v])=>`<option value="${k}" ${l&&l.island===k?'selected':''}>${v.name[currentLang]||v.name.pt}</option>`).join('')}</select></div>
+        <div><label class="block text-sm font-semibold mb-2">${t('municipality')} <span class="text-red-500">*</span></label><select name="municipality" id="createMun" required class="input-cv w-full px-4 py-3 rounded-xl border border-sand-200 dark:border-ocean-700 bg-sand-50 dark:bg-ocean-900 focus:outline-none cursor-pointer"></select></div>
+      </div>
+      <div class="grid grid-cols-2 gap-4">
+        <div>
+          <label class="block text-sm font-semibold mb-2">Estado do equipamento <span class="text-red-500">*</span></label>
+          <select name="condition" required class="input-cv w-full px-4 py-3 rounded-xl border border-sand-200 dark:border-ocean-700 bg-sand-50 dark:bg-ocean-900 focus:outline-none cursor-pointer">
+            <option value="" disabled ${!l?'selected':''}>Selecione o estado *</option>
+            <option value="new" ${l&&l.condition==='new'?'selected':''}>${t('condNew')}</option>
+            <option value="like_new" ${l&&l.condition==='like_new'?'selected':''}>${t('condLikeNew')}</option>
+            <option value="good" ${l&&l.condition==='good'?'selected':''}>${t('condGood')}</option>
+            <option value="used" ${l&&l.condition==='used'?'selected':''}>${t('condUsed')}</option>
+            <option value="parts" ${l&&l.condition==='parts'?'selected':''}>Para Pecas</option>
+          </select>
+        </div>
+        <div class="flex items-end"><label class="flex items-center gap-3 p-4 border border-sand-200 dark:border-ocean-700 rounded-xl cursor-pointer hover:bg-sand-100 dark:hover:bg-ocean-700 transition-colors w-full"><input type="checkbox" name="negotiable" ${l&&l.negotiable?'checked':''} class="w-5 h-5 rounded border-sand-200 text-ocean-500 focus:ring-ocean-500"><span class="font-medium">${t('negotiable')}</span></label></div>
+      </div>
+      
+      <div id="createSpecificFields"></div>
+      
+      <div>
+        <label class="block text-sm font-semibold mb-2">Fotos do Produto <span class="text-red-500">*</span><span class="text-xs text-ocean-500 font-normal ml-2">(Minimo 1, maximo 10 fotos)</span></label>
+        <p class="text-xs text-ocean-500 mb-3">A primeira foto sera a capa do anuncio.</p>
+        <div class="border-2 border-dashed border-sand-200 dark:border-ocean-700 rounded-xl p-6 text-center hover:border-sun-400 transition-colors cursor-pointer" onclick="document.getElementById('photoInput').click()">
+          <input type="file" id="photoInput" accept="image/*" multiple class="hidden" onchange="handleMultipleImages(this.files)">
+          <i class="fas fa-cloud-upload-alt text-4xl text-ocean-500 mb-3"></i>
+          <div class="font-medium mb-1">Clique para selecionar fotos</div>
+          <div class="text-sm text-ocean-500">PNG, JPG ate 5MB cada</div>
+        </div>
+        <div id="photoPreview" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 mt-4"></div>
+        <div id="imageCounter" class="text-sm text-ocean-500 mt-2 hidden"><i class="fas fa-info-circle"></i> <span id="imageCountText">0</span> de 10 imagens selecionadas</div>
+      </div>
+      <div class="flex gap-3 pt-4">
+        <button type="button" onclick="closeModal()" class="flex-1 px-6 py-3.5 rounded-full border-2 border-sand-200 dark:border-ocean-700 hover:bg-sand-100 dark:hover:bg-ocean-700 font-semibold transition-all">${t('cancel')}</button>
+        <button type="submit" class="flex-1 btn-primary px-6 py-3.5 rounded-full font-semibold flex items-center justify-center gap-2"><i class="fas fa-paper-plane"></i>${t('publish')}</button>
+      </div>
+    </form>
+  `);
+  updateCreateMunicipalities(l?l.island:'santiago');
+  renderCreateSpecificFields(l?l.category:'other', l);
+  renderImagePreview();
+}
+
+function handleMultipleImages(files) {
+  if(!files || files.length === 0) return;
+  const remainingSlots = 10 - window._tempImages.length;
+  const filesToProcess = Array.from(files).slice(0, remainingSlots);
+  if(files.length > remainingSlots) showToast(`Apenas ${remainingSlots} imagem(s) podem ser adicionadas`, 'error');
+  filesToProcess.forEach(file => {
+    if(file.size > 5 * 1024 * 1024) { showToast(`Imagem ${file.name} excede 5MB`, 'error'); return; }
+    const reader = new FileReader();
+    reader.onload = (e) => { window._tempImages.push(e.target.result); renderImagePreview(); };
+    reader.readAsDataURL(file);
+  });
+}
+
+function renderImagePreview() {
+  const preview = document.getElementById('photoPreview');
+  const counter = document.getElementById('imageCounter');
+  const countText = document.getElementById('imageCountText');
+  if(!preview) return;
+  preview.innerHTML = window._tempImages.map((img, index) => `
+    <div class="relative group aspect-square rounded-xl overflow-hidden border-2 ${index === 0 ? 'border-sun-400' : 'border-sand-200 dark:border-ocean-700'}">
+      <img src="${img}" class="w-full h-full object-cover">
+      ${index === 0 ? '<div class="absolute top-2 left-2 bg-sun-400 text-ocean-900 text-xs px-2 py-1 rounded-full font-semibold">Capa</div>' : ''}
+      <div class="absolute inset-0 bg-ocean-900/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+        ${index > 0 ? `<button type="button" onclick="moveImage(${index}, -1)" class="w-8 h-8 rounded-full bg-white text-ocean-900 hover:bg-sand-100 flex items-center justify-center" title="Mover para esquerda"><i class="fas fa-arrow-left text-sm"></i></button>` : ''}
+        ${index < window._tempImages.length - 1 ? `<button type="button" onclick="moveImage(${index}, 1)" class="w-8 h-8 rounded-full bg-white text-ocean-900 hover:bg-sand-100 flex items-center justify-center" title="Mover para direita"><i class="fas fa-arrow-right text-sm"></i></button>` : ''}
+        <button type="button" onclick="removeImage(${index})" class="w-8 h-8 rounded-full bg-red-500 text-white hover:bg-red-600 flex items-center justify-center" title="Remover"><i class="fas fa-times text-sm"></i></button>
+      </div>
+    </div>
+  `).join('');
+  if(counter && countText) { counter.classList.remove('hidden'); countText.textContent = window._tempImages.length; }
+}
+
+function removeImage(index) { window._tempImages.splice(index, 1); renderImagePreview(); }
+function moveImage(index, direction) {
+  const newIndex = index + direction;
+  if(newIndex < 0 || newIndex >= window._tempImages.length) return;
+  const temp = window._tempImages[index];
+  window._tempImages[index] = window._tempImages[newIndex];
+  window._tempImages[newIndex] = temp;
+  renderImagePreview();
+}
+
+function renderCreateSpecificFields(category, existingData=null){
+  const container = document.getElementById('createSpecificFields');
+  const filters = CATEGORY_FILTERS[category];
+  
+  if(!filters || filters.length === 0){
+    container.innerHTML = '';
+    return;
+  }
+  
+  const detalhes = existingData && existingData.detalhes ? (typeof existingData.detalhes === 'string' ? JSON.parse(existingData.detalhes) : existingData.detalhes) : {};
+  
+  container.innerHTML = `
+    <div class="border-t border-sand-200 dark:border-ocean-700 pt-5">
+      <h4 class="font-display font-bold text-lg mb-4 flex items-center gap-2"><i class="fas fa-star text-sun-400"></i>Detalhes especificos: ${t('cat_'+category)}</h4>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        ${filters.map(f => {
+          if(f.type === 'select'){
+            return `<div><label class="block text-sm font-semibold mb-2">${f.label}</label><select name="${f.id}" class="input-cv w-full px-4 py-3 rounded-xl border border-sand-200 dark:border-ocean-700 bg-sand-50 dark:bg-ocean-900 focus:outline-none cursor-pointer"><option value="">--</option>${f.options.map(o=>`<option value="${o}" ${detalhes[f.id]===o?'selected':''}>${o}</option>`).join('')}</select></div>`;
+          } else if(f.type === 'checkbox'){
+            return `<div class="flex items-end"><label class="flex items-center gap-3 p-4 border border-sand-200 dark:border-ocean-700 rounded-xl cursor-pointer hover:bg-sand-100 dark:hover:bg-ocean-700 transition-colors w-full"><input type="checkbox" name="${f.id}" ${detalhes[f.id]?'checked':''} class="w-5 h-5 rounded border-sand-200 text-ocean-500 focus:ring-ocean-500"><span class="font-medium">${f.label}</span></label></div>`;
+          } else {
+            return `<div><label class="block text-sm font-semibold mb-2">${f.label}</label><input type="${f.type}" name="${f.id}" value="${detalhes[f.id]||''}" class="input-cv w-full px-4 py-3 rounded-xl border border-sand-200 dark:border-ocean-700 bg-sand-50 dark:bg-ocean-900 focus:outline-none"></div>`;
+          }
+        }).join('')}
+      </div>
+    </div>
+  `;
+}
+
+function updateCreateMunicipalities(island){
+  const sel=document.getElementById('createMun');
+  if(ISLANDS[island])sel.innerHTML=ISLANDS[island].municipalities.map(m=>`<option value="${m}">${m}</option>`).join('');
+}
+
+function openAuth(mode = 'login') {
+  const isLogin = mode === 'login';
+  
+  showModal(`
+    <div class="max-w-md mx-auto">
+      <div class="text-center mb-6">
+        <div class="w-16 h-16 mx-auto mb-4 rounded-full bg-ocean-500 flex items-center justify-center text-sun-400 text-2xl shadow-lg">
+          <i class="fas fa-sun"></i>
+        </div>
+        <h2 class="font-display text-2xl font-bold mb-1">${isLogin ? 'Bem-vindo de volta' : 'Criar Conta'}</h2>
+        <p class="text-ocean-500 text-sm">${isLogin ? 'Entra na tua conta' : 'Cria a tua conta gratis'}</p>
+      </div>
+      
+      <div class="flex gap-2 mb-6 p-1 bg-sand-100 dark:bg-ocean-700 rounded-full">
+        <button onclick="openAuth('login')" class="auth-tab flex-1 py-2.5 rounded-full font-semibold text-sm transition-all ${isLogin ? 'active shadow-lg' : 'text-ocean-600 dark:text-sand-300 hover:text-ocean-700'}">Entrar</button>
+        <button onclick="openAuth('register')" class="auth-tab flex-1 py-2.5 rounded-full font-semibold text-sm transition-all ${!isLogin ? 'active shadow-lg' : 'text-ocean-600 dark:text-sand-300 hover:text-ocean-700'}">Criar Conta</button>
+      </div>
+      
+      <form id="authForm" class="space-y-3" onsubmit="handleAuth(event, '${mode}')">
+        ${!isLogin ? `
+        <input name="name" type="text" required placeholder="Nome completo" class="input-cv w-full px-4 py-3 rounded-xl border border-sand-200 dark:border-ocean-700 bg-sand-50 dark:bg-ocean-900 focus:outline-none">
+        ` : ''}
+        <input name="email" type="email" required placeholder="Email" class="input-cv w-full px-4 py-3 rounded-xl border border-sand-200 dark:border-ocean-700 bg-sand-50 dark:bg-ocean-900 focus:outline-none">
+        <input name="password" type="password" required placeholder="Palavra-passe" minlength="6" class="input-cv w-full px-4 py-3 rounded-xl border border-sand-200 dark:border-ocean-700 bg-sand-50 dark:bg-ocean-900 focus:outline-none">
+        ${isLogin ? `
+        <div class="flex items-center justify-between text-sm">
+          <label class="flex items-center gap-2 cursor-pointer">
+            <input type="checkbox" class="w-4 h-4 rounded border-sand-200 text-ocean-500 focus:ring-ocean-500">
+            <span class="text-ocean-500">Lembrar-me</span>
+          </label>
+          <button type="button" onclick="showToast('Contacta o suporte para recuperar senha', 'info')" class="text-ocean-500 hover:text-ocean-700 hover:underline">Esqueci senha</button>
+        </div>
+        ` : '<p class="text-xs text-ocean-500">Minimo 6 caracteres</p>'}
+        <button type="submit" class="w-full btn-ocean py-3 rounded-full font-semibold">
+          <i class="fas ${isLogin ? 'fa-sign-in-alt' : 'fa-user-plus'} mr-2"></i>
+          ${isLogin ? 'Entrar' : 'Criar Conta'}
+        </button>
+      </form>
+      
+      <div class="mt-6">
+        <div class="relative mb-4">
+          <div class="absolute inset-0 flex items-center"><div class="w-full border-t border-sand-200 dark:border-ocean-700"></div></div>
+          <div class="relative flex justify-center text-xs"><span class="px-3 bg-white dark:bg-ocean-800 text-ocean-500">ou continuar com</span></div>
+        </div>
+        <div class="grid grid-cols-2 gap-2">
+          <button onclick="oauthLogin('Google')" class="social-btn px-4 py-2.5 rounded-full border border-sand-200 dark:border-ocean-700 hover:bg-sand-100 dark:hover:bg-ocean-700 font-medium text-sm flex items-center justify-center gap-2">
+            <i class="fab fa-google text-red-500"></i>Google
+          </button>
+          <button onclick="oauthLogin('Facebook')" class="social-btn px-4 py-2.5 rounded-full border border-sand-200 dark:border-ocean-700 hover:bg-sand-100 dark:hover:bg-ocean-700 font-medium text-sm flex items-center justify-center gap-2">
+            <i class="fab fa-facebook-f text-blue-600"></i>Facebook
+          </button>
+        </div>
+      </div>
+    </div>
+  `);
+}
+
+async function handleAuth(e, mode) {
+  e.preventDefault();
+  const formData = new FormData(e.target);
+  const email = formData.get('email');
+  const password = formData.get('password');
+  const name = formData.get('name');
+  
+  const submitBtn = e.target.querySelector('button[type="submit"]');
+  const originalText = submitBtn.innerHTML;
+  submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> A processar...';
+  submitBtn.disabled = true;
+  
+  try {
+    if (mode === 'register') {
+      const { data, error } = await sb.auth.signUp({
+        email,
+        password,
+        options: { data: { name: name } }
+      });
+      
+      if (error) throw error;
+      
+      showToast('Conta criada! Verifique o email para confirmar.', 'success');
+      closeModal();
+      setTimeout(() => openAuth('login'), 1500);
+    } else {
+      const { data, error } = await sb.auth.signInWithPassword({ email, password });
+      
+      if (error) throw error;
+      
+      state.user = {
+        id: data.user.id,
+        name: data.user.user_metadata?.name || email.split('@')[0],
+        email: data.user.email,
+        verified: data.user.email_confirmed_at !== null,
+        createdAt: new Date(data.user.created_at).getTime()
+      };
+      
+      closeModal();
+      renderAuthButton();
+      showToast('Bem-vindo ao CV Mercado!', 'success');
+      
+      if (window.pendingAction === 'publish') {
+        setTimeout(() => openCreateListing(), 500);
+        window.pendingAction = null;
+      } else if (window.pendingAction === 'favorite') {
+        setTimeout(() => toggleFavorite(window.pendingFavoriteId), 500);
+        window.pendingAction = null;
+        window.pendingFavoriteId = null;
+      }
+    }
+  } catch (err) {
+    console.error('Auth error:', err);
+    let errorMsg = 'Erro ao autenticar';
+    if (err.message.includes('Invalid login credentials')) {
+      errorMsg = 'Email ou palavra-passe incorretos';
+    } else if (err.message.includes('Email not confirmed')) {
+      errorMsg = 'Confirme o seu email primeiro';
+    } else if (err.message.includes('User already registered')) {
+      errorMsg = 'Este email ja esta registado';
+    } else {
+      errorMsg = err.message;
+    }
+    showToast(errorMsg, 'error');
+  } finally {
+    submitBtn.innerHTML = originalText;
+    submitBtn.disabled = false;
+  }
+}
+
+async function oauthLogin(provider) {
+  try {
+    const redirectUrl = 'https://cvmercado.cv';
+    
+    const { data, error } = await sb.auth.signInWithOAuth({
+      provider: provider.toLowerCase(),
+      options: { 
+        redirectTo: redirectUrl,
+        queryParams: {
+          access_type: 'offline',
+          prompt: 'consent'
+        }
+      }
+    });
+    
+    if (error) throw error;
+    
+    if (data && data.url) {
+      window.location.href = data.url;
+    }
+    
+    showToast(`A redirecionar para ${provider}...`, 'success');
+  } catch (err) {
+    console.error('OAuth error:', err);
+    showToast('Erro ao conectar: ' + err.message, 'error');
+  }
+}
+
+function openUserMenu() {
+  if (!state.user) {
+    openAuth('login');
+    return;
+  }
+  
+  showModal(`
+    <div class="max-w-md mx-auto text-center">
+      <div class="w-24 h-24 mx-auto mb-4 rounded-full bg-ocean-500 flex items-center justify-center text-sun-400 font-bold text-4xl shadow-lg">
+        ${state.user.name[0].toUpperCase()}
+      </div>
+      <h2 class="font-display text-2xl font-bold mb-1">${state.user.name}</h2>
+      <p class="text-ocean-500 mb-6">${state.user.email}</p>
+      
+      <div class="space-y-2 mb-6">
+        <button onclick="closeModal(); openMyListings()" class="w-full px-6 py-3.5 rounded-full bg-sand-100 dark:bg-ocean-700 hover:bg-sand-200 dark:hover:bg-ocean-600 font-medium flex items-center justify-center gap-3 transition-all">
+          <i class="fas fa-box text-ocean-500"></i>Meus Anuncios
+        </button>
+        <button onclick="closeModal(); openFavorites()" class="w-full px-6 py-3.5 rounded-full bg-sand-100 dark:bg-ocean-700 hover:bg-sand-200 dark:hover:bg-ocean-600 font-medium flex items-center justify-center gap-3 transition-all">
+          <i class="fas fa-heart text-sun-500"></i>Favoritos
+        </button>
+        <button onclick="closeModal(); openMessages()" class="w-full px-6 py-3.5 rounded-full bg-sand-100 dark:bg-ocean-700 hover:bg-sand-200 dark:hover:bg-ocean-600 font-medium flex items-center justify-center gap-3 transition-all">
+          <i class="fas fa-comment text-ocean-500"></i>Mensagens
+        </button>
+      </div>
+      
+      <button onclick="logout()" class="w-full px-6 py-3.5 rounded-full bg-red-50 dark:bg-red-900/20 hover:bg-red-100 dark:hover:bg-red-900/30 text-red-600 font-medium flex items-center justify-center gap-3 transition-all">
+        <i class="fas fa-sign-out-alt"></i>Sair da Conta
+      </button>
+    </div>
+  `);
+}
+
+async function logout() {
+  if (!confirm('Tem certeza que deseja sair?')) return;
+  
+  try {
+    await sb.auth.signOut();
+    state.user = null;
+    closeModal();
+    renderAuthButton();
+    renderListings();
+    showToast('Sessao terminada com sucesso', 'success');
+  } catch (err) {
+    showToast('Erro ao sair: ' + err.message, 'error');
+  }
+}
+
+function openMyListings(){
+  const mine=state.listings.filter(l=>l.seller&&l.seller.id===state.user.id);
+  showModal(`
+    <div class="flex items-center justify-between mb-6"><h2 class="font-display text-2xl font-bold"><i class="fas fa-box text-ocean-500 mr-2"></i>Meus anuncios (${mine.length})</h2></div>
+    <div class="space-y-3 max-h-[60vh] overflow-y-auto pr-2">
+      ${mine.length?mine.map(l=>{
+        const images = l.imagens && Array.isArray(l.imagens) ? l.imagens : (l.img ? [l.img] : []);
+        const hasImage = images.length > 0;
+        return `<div class="flex items-center gap-4 p-4 bg-sand-50 dark:bg-ocean-700 rounded-xl border border-sand-200 dark:border-ocean-600">
+          ${hasImage ? `<img src="${images[0]}" class="w-20 h-20 rounded-lg object-cover">` : `<div class="w-20 h-20 rounded-lg img-placeholder"><i class="fas fa-image text-xl text-ocean-500"></i></div>`}
+          <div class="flex-1 min-w-0"><div class="font-bold truncate">${l.title}</div><div class="price-text font-bold">${formatPrice(l.price)}</div></div>
+          <button onclick="deleteListing(${l.id})" class="px-4 py-2 rounded-full bg-red-500 hover:bg-red-600 text-white font-medium flex items-center gap-2 transition-all"><i class="fas fa-trash"></i>${t('delete')}</button>
+        </div>`;
+      }).join(''):`<div class="text-center py-12 text-ocean-500"><i class="fas fa-box-open text-4xl mb-3"></i><p>${t('noResults')}</p></div>`}
+    </div>
+  `);
+}
+
+async function deleteListing(id){
+  if(!confirm('Confirmar eliminacao?'))return;
+  
+  try {
+    const { error } = await sb.from('listings').delete().eq('id', id);
+    if(error) throw error;
+    
+    state.listings=state.listings.filter(l=>l.id!==id);
+    closeModal();
+    renderListings();
+    showToast('Anuncio eliminado','success');
+  } catch(err) {
+    showToast('Erro ao eliminar: ' + err.message, 'error');
+  }
+}
+
+function openMessages(){
+  if(!state.user){showToast(t('loginRequired'),'error');openAuth('login');return;}
+  const convs=Object.keys(state.messages[state.user.id]||{});
+  showModal(`
+    <div class="flex items-center justify-between mb-6"><h2 class="font-display text-2xl font-bold"><i class="fas fa-comment text-ocean-500 mr-2"></i>${t('messages')}</h2></div>
+    <div class="space-y-2 max-h-[60vh] overflow-y-auto pr-2">
+      ${convs.length?convs.map(name=>{const msgs=state.messages[state.user.id][name];const last=msgs[msgs.length-1];return `<button onclick="closeModal();openChat('${name.replace(/'/g,"\\'")}')" class="w-full text-left p-4 bg-sand-50 dark:bg-ocean-700 rounded-xl hover:bg-sand-100 dark:hover:bg-ocean-600 border border-sand-200 dark:border-ocean-600 transition-all flex items-center gap-3"><div class="w-12 h-12 rounded-full bg-ocean-500 flex items-center justify-center text-sun-400 font-bold flex-shrink-0">${name[0].toUpperCase()}</div><div class="flex-1 min-w-0"><div class="font-bold">${name}</div><div class="text-sm text-ocean-500 truncate">${last.text}</div></div></button>`;}).join(''):`<div class="text-center py-12 text-ocean-500"><i class="fas fa-comments text-4xl mb-3"></i><p>${t('noResults')}</p></div>`}
+    </div>
+  `);
+}
+
+function openChat(sellerName,listingId=null){
+  if(!state.user){showToast(t('loginRequired'),'error');openAuth('login');return;}
+  if(!state.messages[state.user.id])state.messages[state.user.id]={};
+  if(!state.messages[state.user.id][sellerName])state.messages[state.user.id][sellerName]=[];
+  save();
+  const renderChat=()=>{
+    const msgs=state.messages[state.user.id][sellerName];
+    showModal(`
+      <div class="flex flex-col h-[70vh]">
+        <div class="flex items-center gap-3 pb-4 border-b border-sand-200 dark:border-ocean-700 mb-4"><div class="w-10 h-10 rounded-full bg-ocean-500 flex items-center justify-center text-sun-400 font-bold">${sellerName[0].toUpperCase()}</div><div class="font-display font-bold text-lg">${sellerName}</div></div>
+        <div id="chatMsgs" class="flex-1 overflow-y-auto py-3 space-y-3 pr-2">${msgs.map(m=>`<div class="flex ${m.from==='me'?'justify-end':'justify-start'}"><div class="max-w-[75%] px-4 py-3 rounded-2xl ${m.from==='me'?'btn-ocean text-white':'bg-sand-100 dark:bg-ocean-700'}">${m.text}<div class="text-xs opacity-70 mt-1">${new Date(m.ts).toLocaleTimeString().slice(0,5)}</div></div></div>`).join('')}</div>
+        <div class="flex gap-2 pt-4 border-t border-sand-200 dark:border-ocean-700 mt-4">
+          <input id="chatInput" type="text" placeholder="${t('typeMessage')}" class="input-cv flex-1 px-4 py-3 rounded-full border border-sand-200 dark:border-ocean-700 bg-sand-50 dark:bg-ocean-900 focus:outline-none" onkeypress="if(event.key==='Enter')sendMsg()">
+          <button onclick="sendMsg()" class="btn-primary px-6 py-3 rounded-full font-semibold flex items-center gap-2"><i class="fas fa-paper-plane"></i>${t('send')}</button>
+        </div>
+      </div>
+    `);
+    const box=document.getElementById('chatMsgs');
+    box.scrollTop=box.scrollHeight;
+    document.getElementById('chatInput').focus();
+    window.sendMsg=()=>{
+      const inp=document.getElementById('chatInput');
+      if(!inp.value.trim())return;
+      state.messages[state.user.id][sellerName].push({from:'me',text:inp.value,ts:Date.now()});
+      save();renderChat();
+      setTimeout(()=>{state.messages[state.user.id][sellerName].push({from:sellerName,text:'Obrigado pela mensagem! Respondo em breve.',ts:Date.now()});save();renderChat();document.getElementById('chatMsgs').scrollTop=document.getElementById('chatMsgs').scrollHeight;},1500);
+    };
+  };
+  renderChat();
+  if(listingId){
+    const l=state.listings.find(x=>x.id===listingId);
+    if(l&&!state.messages[state.user.id][sellerName].length){
+      state.messages[state.user.id][sellerName].push({from:'me',text:`Ola! Tenho interesse no anuncio: ${l.title} (${formatPrice(l.price)}). Ainda esta disponivel?`,ts:Date.now()});
+      save();renderChat();
+    }
+  }
+}
+
+function showModal(html,size='max-w-2xl'){document.getElementById('modalRoot').innerHTML=`<div class="fixed inset-0 z-50 modal-backdrop flex items-center justify-center p-4 fade-in" onclick="if(event.target===this)closeModal()"><div class="bg-white dark:bg-ocean-800 rounded-3xl shadow-2xl w-full ${size} max-h-[90vh] overflow-y-auto p-6 lg:p-8">${html}</div></div>`;}
+function closeModal(){document.getElementById('modalRoot').innerHTML='';}
+
+function showToast(msg,type='success'){
+  const t=document.getElementById('toast');
+  t.querySelector('span').textContent=msg;
+  t.querySelector('i').className=type==='success'?'fas fa-check-circle text-green-400':type==='error'?'fas fa-exclamation-circle text-red-400':'fas fa-info-circle text-ocean-400';
+  t.classList.remove('hidden');
+  clearTimeout(window._toastT);
+  window._toastT=setTimeout(()=>t.classList.add('hidden'),3000);
+}
+
+async function carregarDoSupabase(){
+  renderSkeleton();
+  
+  try {
+    const {data,error}=await sb.from('listings').select('*').order('created_at',{ascending:false});
+    
+    if(data&&data.length>0){
+      state.listings=data.map((row)=>({
+        id:row.id,
+        title:row.titulo,
+        description:row.descricao||`Anuncio em ${row.local}, ${row.ilha}.`,
+        price:row.preco,
+        negotiable:row.negociavel||false,
+        condition:row.condicao||'good',
+        category:row.categoria||'other',
+        island:row.ilha?row.ilha.toLowerCase().replace(/\s/g,'').replace(/[^a-zA-Z0-9]/g,''):'santiago',
+        municipality:row.local,
+        img:row.img,
+        imagens: row.imagens || (row.img ? [row.img] : []),
+        detalhes:row.detalhes||'{}',
+        seller:{id:row.user_id,name:'Vendedor CV',verified:false,rating:'5.0'},
+        views:0,
+        createdAt:new Date(row.created_at).getTime(),
+        featured:false
+      }));
+    } else {
+      state.listings = EXEMPLOS.map(e => ({
+        id: e.id,
+        title: e.titulo,
+        description: e.descricao,
+        price: e.preco,
+        negotiable: e.negociavel,
+        condition: e.condicao,
+        category: e.categoria,
+        island: e.ilha,
+        municipality: e.local,
+        img: e.img,
+        imagens: e.img ? [e.img] : [],
+        detalhes: e.detalhes,
+        seller: {id:null,name:'Vendedor CV',verified:false,rating:'5.0'},
+        views: 0,
+        createdAt: new Date(e.created_at).getTime(),
+        featured: false
+      }));
+    }
+  } catch(err) {
+    console.error('Erro ao carregar do Supabase:', err);
+    state.listings = EXEMPLOS.map(e => ({
+      id: e.id,
+      title: e.titulo,
+      description: e.descricao,
+      price: e.preco,
+      negotiable: e.negociavel,
+      condition: e.condicao,
+      category: e.categoria,
+      island: e.ilha,
+      municipality: e.local,
+      img: e.img,
+      imagens: e.img ? [e.img] : [],
+      detalhes: e.detalhes,
+      seller: {id:null,name:'Vendedor CV',verified:false,rating:'5.0'},
+      views: 0,
+      createdAt: new Date(e.created_at).getTime(),
+      featured: false
+    }));
+  }
+  
+  state.isLoading = false;
+  renderListings();
+}
+
+window.handlePublish = async function(e){
+  e.preventDefault();
+  const form = document.getElementById('listingForm');
+  const submitBtn = form.querySelector('button[type="submit"]');
+  const textoOriginal = submitBtn.innerHTML;
+  submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> A processar...';
+  submitBtn.disabled = true;
+
+  try {
+    if(window._tempImages.length === 0) throw new Error('Adicione pelo menos 1 foto');
+    
+    const imageUrls = [];
+    for(let i = 0; i < window._tempImages.length; i++) {
+      submitBtn.innerHTML = `<i class="fas fa-cloud-upload-alt mr-2"></i> A enviar ${i+1}/${window._tempImages.length}...`;
+      const imgData = window._tempImages[i];
+      
+      if(imgData.startsWith('http')) {
+        imageUrls.push(imgData);
+        continue;
+      }
+      
+      const blob = await fetch(imgData).then(r => r.blob());
+      const file = new File([blob], `img-${Date.now()}-${i}.webp`, { type: 'image/webp' });
+      const fileName = `img-${Date.now()}-${i}`;
+      
+      const { error: uploadError } = await sb.storage.from('listing-images').upload(fileName, file);
+      if(uploadError) throw new Error('Falha no upload: ' + uploadError.message);
+      
+      const { data: urlData } = sb.storage.from('listing-images').getPublicUrl(fileName);
+      imageUrls.push(urlData.publicUrl);
+    }
+
+    submitBtn.innerHTML = '<i class="fas fa-save mr-2"></i> A guardar...';
+
+    const titulo = form.querySelector('[name="title"]').value || 'Sem titulo';
+    const preco = parseFloat(form.querySelector('[name="price"]').value) || 0;
+    const ilha = form.querySelector('[name="island"]').value || 'santiago';
+    const local = form.querySelector('[name="municipality"]').value || 'Praia';
+    
+    const categoriaSelect = form.querySelector('[name="category"]');
+    const categoria = categoriaSelect ? categoriaSelect.value : 'other';
+    
+    const condicaoSelect = form.querySelector('[name="condition"]');
+    const condicao = condicaoSelect ? condicaoSelect.value : 'good';
+    
+    const negociavelInput = form.querySelector('[name="negotiable"]');
+    const negociavel = negociavelInput ? negociavelInput.checked : false;
+
+    const specificFilters = CATEGORY_FILTERS[categoria] || [];
+    const detalhes = {};
+    specificFilters.forEach(f => {
+      const input = form.querySelector(`[name="${f.id}"]`);
+      if(input){
+        if(f.type === 'checkbox') detalhes[f.id] = input.checked;
+        else if(input.value) detalhes[f.id] = input.value;
+      }
+    });
+
+    const dados = {
+      titulo, preco, ilha, local, categoria, condicao, negociavel,
+      img: imageUrls[0],
+      imagens: imageUrls,
+      detalhes: JSON.stringify(detalhes),
+      user_id: state.user.id
+    };
+
+    const {data,error} = await sb.from('listings').insert([dados]).select();
+    if(error) throw new Error('Erro na base de dados: '+error.message);
+
+    showToast('Anuncio publicado com sucesso!','success');
+    closeModal();
+    window._tempImages = [];
+    await carregarDoSupabase();
+  } catch(err){
+    console.error('Erro:', err);
+    showToast('Erro: '+err.message,'error');
+  } finally {
+    submitBtn.innerHTML = textoOriginal;
+    submitBtn.disabled = false;
+  }
+};
+
+const I18N = {
+  pt: {
+    tagline:"O marketplace de Cabo Verde",
+    searchPlaceholder:"Pesquisar em todo Cabo Verde...",
+    login:"Entrar",
+    register:"Registar",
+    postAd:"Publicar",
+    categories:"Categorias",
+    allIslands:"Todas as ilhas",
+    allMunicipalities:"Todos os concelhos",
+    allCategories:"Todas categorias",
+    anyCondition:"Qualquer estado",
+    condNew:"Novo",
+    condLikeNew:"Como novo",
+    condGood:"Bom",
+    condUsed:"Usado",
+    sortLatest:"Mais recentes",
+    sortPriceAsc:"Preco: menor",
+    sortPriceDesc:"Preco: maior",
+    sortPopular:"Mais populares",
+    sortDistance:"Mais proximo",
+    price:"Preco:",
+    negotiableOnly:"So negociaveis",
+    apply:"Aplicar",
+    clear:"Limpar",
+    ads:"Anuncios",
+    noResults:"Nenhum anuncio encontrado",
+    footerAbout:"O maior marketplace de Cabo Verde.",
+    payments:"Pagamentos",
+    support:"Apoio",
+    follow:"Siga-nos",
+    negotiable:"Negociavel",
+    condition:"Estado",
+    location:"Localizacao",
+    contactSeller:"Contactar vendedor",
+    favorite:"Favorito",
+    share:"Partilhar",
+    email:"Email",
+    password:"Palavra-passe",
+    name:"Nome",
+    phone:"Telefone",
+    loginWith:"Ou entrar com",
+    or:"ou",
+    noAccount:"Ainda nao tem conta?",
+    hasAccount:"Ja tem conta?",
+    title:"Titulo",
+    description:"Descricao",
+    category:"Categoria",
+    island:"Ilha",
+    municipality:"Concelho",
+    priceCVE:"Preco (CVE)",
+    photos:"Foto do Produto",
+    publish:"Publicar anuncio",
+    cancel:"Cancelar",
+    save:"Guardar",
+    delete:"Eliminar",
+    edit:"Editar",
+    messages:"Mensagens",
+    favorites:"Favoritos",
+    profile:"Perfil",
+    logout:"Sair",
+    typeMessage:"Escreva uma mensagem...",
+    send:"Enviar",
+    welcome:"Bem-vindo ao CV Mercado!",
+    loginRequired:"Inicie sessao para continuar",
+    adCreated:"Anuncio publicado com sucesso!",
+    adDeleted:"Anuncio eliminado",
+    reported:"Denunciado com sucesso",
+    fillRequired:"Preencha os campos obrigatorios",
+    views:"visualizacoes",
+    since:"desde",
+    km:"km",
+    cat_cars:"Automoveis",
+    cat_motorcycles:"Motos",
+    cat_realestate:"Imobiliario",
+    cat_electronics:"Eletronica",
+    cat_phones:"Telemoveis",
+    cat_tablets:"Tablets",
+    cat_computers:"Computadores",
+    cat_home:"Casa e Moveis",
+    cat_agriculture:"Agricultura",
+    cat_livestock:"Pecuaria",
+    cat_boats:"Barcos",
+    cat_jobs:"Empregos",
+    cat_services:"Servicos",
+    cat_fashion:"Moda",
+    cat_sports:"Desporto",
+    cat_tourism:"Turismo",
+    cat_business:"Empresarial",
+    cat_kids:"Brinquedos",
+    cat_music:"Instrumentos",
+    cat_other:"Outros",
+    cat_kids_clothing:"Roupas Criancas",
+    cat_children:"Criancas"
+  },
+  en: {
+    tagline:"The marketplace of Cabo Verde",
+    searchPlaceholder:"Search across Cabo Verde...",
+    login:"Sign in",
+    register:"Sign up",
+    postAd:"Post ad",
+    categories:"Categories",
+    allIslands:"All islands",
+    allMunicipalities:"All municipalities",
+    allCategories:"All categories",
+    anyCondition:"Any condition",
+    condNew:"New",
+    condLikeNew:"Like new",
+    condGood:"Good",
+    condUsed:"Used",
+    sortLatest:"Most recent",
+    sortPriceAsc:"Price: low",
+    sortPriceDesc:"Price: high",
+    sortPopular:"Most popular",
+    sortDistance:"Nearest",
+    price:"Price:",
+    negotiableOnly:"Negotiable only",
+    apply:"Apply",
+    clear:"Clear",
+    ads:"Listings",
+    noResults:"No listings found",
+    footerAbout:"The largest marketplace in Cabo Verde.",
+    payments:"Payments",
+    support:"Support",
+    follow:"Follow us",
+    negotiable:"Negotiable",
+    condition:"Condition",
+    location:"Location",
+    contactSeller:"Contact seller",
+    favorite:"Favorite",
+    share:"Share",
+    email:"Email",
+    password:"Password",
+    name:"Name",
+    phone:"Phone",
+    loginWith:"Or sign in with",
+    or:"or",
+    noAccount:"Don't have an account?",
+    hasAccount:"Already have an account?",
+    title:"Title",
+    description:"Description",
+    category:"Category",
+    island:"Island",
+    municipality:"Municipality",
+    priceCVE:"Price (CVE)",
+    photos:"Product Photo",
+    publish:"Post listing",
+    cancel:"Cancel",
+    save:"Save",
+    delete:"Delete",
+    edit:"Edit",
+    messages:"Messages",
+    favorites:"Favorites",
+    profile:"Profile",
+    logout:"Sign out",
+    typeMessage:"Type a message...",
+    send:"Send",
+    welcome:"Welcome to CV Mercado!",
+    loginRequired:"Please sign in to continue",
+    adCreated:"Listing posted successfully!",
+    adDeleted:"Listing deleted",
+    reported:"Reported successfully",
+    fillRequired:"Please fill required fields",
+    views:"views",
+    since:"since",
+    km:"km",
+    cat_cars:"Cars",
+    cat_motorcycles:"Motorcycles",
+    cat_realestate:"Real Estate",
+    cat_electronics:"Electronics",
+    cat_phones:"Mobile Phones",
+    cat_tablets:"Tablets",
+    cat_computers:"Computers",
+    cat_home:"Home & Furniture",
+    cat_agriculture:"Agriculture",
+    cat_livestock:"Livestock",
+    cat_boats:"Boats",
+    cat_jobs:"Jobs",
+    cat_services:"Services",
+    cat_fashion:"Fashion",
+    cat_sports:"Sports",
+    cat_tourism:"Tourism",
+    cat_business:"Business Equipment",
+    cat_kids:"Toys",
+    cat_music:"Instruments",
+    cat_other:"Other",
+    cat_kids_clothing:"Kids Clothing",
+    cat_children:"Children"
+  }
+};
+let currentLang = localStorage.getItem('lang') || 'pt';
+const t = (k) => (I18N[currentLang] && I18N[currentLang][k]) || I18N.pt[k] || k;
+
+document.getElementById('searchInput').addEventListener('input',e=>{state.filters.search=e.target.value;renderListings();});
+document.getElementById('filterIsland').addEventListener('change',e=>{renderMunicipalityOptions(e.target.value);});
+document.getElementById('filterCategory').addEventListener('change',e=>{state.filters.category=e.target.value;renderSpecificFilters();renderCategories();});
+document.getElementById('langSelect').addEventListener('change',e=>setLang(e.target.value));
+
+if(localStorage.getItem('theme')==='dark'||(!localStorage.getItem('theme')&&window.matchMedia('(prefers-color-scheme:dark)').matches))document.documentElement.classList.add('dark');
+
+document.getElementById('langSelect').value=currentLang;
+applyI18n();
+renderCategories();
+renderIslandOptions();
+renderCategoryOptions();
+carregarDoSupabase();
+renderAuthButton();
+
+sb.channel('listings')
+  .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'listings' }, payload => {
+    const newRow = payload.new;
+    const newListing = {
+      id: newRow.id,
+      title: newRow.titulo,
+      description: newRow.descricao || `Anuncio em ${newRow.local}, ${newRow.ilha}.`,
+      price: newRow.preco,
+      negotiable: newRow.negociavel || false,
+      condition: newRow.condicao || 'good',
+      category: newRow.categoria || 'other',
+      island: newRow.ilha ? newRow.ilha.toLowerCase().replace(/\s/g,'').replace(/[^a-zA-Z0-9]/g,'') : 'santiago',
+      municipality: newRow.local,
+      img: newRow.img,
+      imagens: newRow.imagens || (newRow.img ? [newRow.img] : []),
+      detalhes: newRow.detalhes || '{}',
+      seller: {id: newRow.user_id, name: 'Vendedor CV', verified: false, rating: '5.0'},
+      views: 0,
+      createdAt: new Date(newRow.created_at).getTime(),
+      featured: false
+    };
+    
+    state.listings.unshift(newListing);
+    renderListings();
+    showToast('Novo anuncio publicado!', 'success');
+  })
+  .on('postgres_changes', { event: 'DELETE', schema: 'public', table: 'listings' }, payload => {
+    state.listings = state.listings.filter(l => l.id !== payload.old.id);
+    renderListings();
+  })
+  .subscribe();
+
+(async () => {
+  const { data: { session } } = await sb.auth.getSession();
+  if(session && session.user) {
+    state.user = {
+      id: session.user.id,
+      name: session.user.user_metadata?.name || session.user.email.split('@')[0],
+      email: session.user.email,
+      verified: session.user.email_confirmed_at !== null,
+      createdAt: new Date(session.user.created_at).getTime()
+    };
+    renderAuthButton();
+  }
+})();
+
+console.log('%cCV Mercado','font-size:24px;font-weight:bold;color:#f7b267');
+console.log('Plataforma carregada com sucesso!');
+</script>
+</body>
+</html>
